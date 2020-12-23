@@ -1,17 +1,27 @@
 [[source]]
-url = "https://pypi.python.org/simple"
-name = "pypi"
+url = "https://pypi.org/simple"
 verify_ssl = true
+name = "pypi"
 
 [packages]
-google-cloud-pubsub = "*"
+flask = "*"
 notifications-python-client = "*"
-structlog = "*"
-asyncio = "*"
+simplejson = "*"
+
+[dev-packages]
+black = "*"
+mypy = "*"
 pylint = "*"
+pytest = "*"
+flake8 = "*"
+pylint-quotes = "*"
+responses = "*"
+pytest-cov = "*"
+functions-framework = "*"
+python-dotenv = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
 
 [pipenv]
-allow_prereleases = false
+allow_prereleases = true

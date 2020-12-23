@@ -1,0 +1,38 @@
+.gcloudignore
+.git
+.gitignore
+
+# Python pycache:
+__pycache__/
+
+# MyPy
+.mypy_cache/
+
+# PyTest
+.pytest_cache/
+
+# Pylint
+.pylintrc
+
+# VSCode
+.vscode/
+
+# Coverage results
+htmlcov/
+.coverage/
+
+# Test folders
+tests/
+
+# Readme
+README.md
+
+# Tox
+tox.ini
+
+# Test scripts
+scripts/run_test*
+
+# Env files
+.env
+.development.env
