@@ -17,14 +17,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install Pipenv
         run: pip install pipenv
-      - name: Cache virtualenv
-        id: cache-virtualenv
-        uses: actions/cache@v1
-        with:
-          path: ~/.local/share/virtualenvs/
-          key: ${{ runner.os }}-${{ env.PYTHON_VERSION }}-virtualenvs-${{ hashFiles('Pipfile.lock') }}
       - name: Install virtual environment
-        if: steps.cache-virtualenv.outputs.cache-hit != 'true'
         run: make build
       - name: Running lint tests
         env:
