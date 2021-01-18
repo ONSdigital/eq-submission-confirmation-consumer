@@ -58,7 +58,7 @@ def notify(request: Request) -> Tuple[str, int]:
     if not template_id:
         return "No template id selected", 422
 
-    data_fields = ("email_address", "personalisation")
+    data_fields = ("email_address", "display_address", "tx_id", "questionnaire_id")
     return send_email(
         NOTIFY_API_KEY, {key: data.get(key) for key in data_fields}, template_id
     )
@@ -83,7 +83,14 @@ def send_email(api_key: str, data: Dict, template_id: str) -> Tuple[str, int]:
             "User-agent": f"NOTIFY-API-PYTHON-CLIENT/{__version__}",
         }
     )
-    kwargs = json.dumps({"template_id": template_id, **data})
+
+    kwargs = json.dumps(
+        {
+            "template_id": template_id,
+            "personalisation": {"address": data["display_address"]},
+            "email_address": data["email_address"],
+        }
+    )
 
     try:
         response = session.post(
@@ -91,15 +98,24 @@ def send_email(api_key: str, data: Dict, template_id: str) -> Tuple[str, int]:
             kwargs,
         )
         response.raise_for_status()
+        entry = dict(
+            severity="INFO",
+            message="notify email requested",
+            tx_id=data.get("tx_id"),
+            questionnaire_id=data.get("questionnaire_id"),
+        )
+        print(json.dumps(entry))
     except RequestException as error:
         error_message = error.response.json()["errors"][0]
         status_code = error.response.status_code
         entry = dict(
             severity="ERROR",
             status_code=status_code,
-            message=f"Notify request failed: {error_message}",
+            message=f"notify request failed: {error_message}",
+            tx_id=data.get("tx_id"),
+            questionnaire_id=data.get("questionnaire_id"),
         )
-        print(entry)
+        print(json.dumps(entry))
         return "Notify request failed", error.response.status_code
 
     if response.status_code == 204:

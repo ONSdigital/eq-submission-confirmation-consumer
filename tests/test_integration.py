@@ -27,7 +27,7 @@ expected = {
 class TestNotify:
     payload = {
         "email_address": "test@example.com",
-        "personalisation": {"address": "My House, at the end of my street"},
+        "display_address": "My House, at the end of my street",
         "form_type": "HH",
         "language_code": "en",
         "region_code": "Eng",
@@ -50,9 +50,9 @@ class TestNotify:
         res = requests_session.post(base_url, json=self.payload)
         assert res.json()["content"] != expected["content"]
 
-    def test_missing_personalisation(self, base_url, requests_session):
+    def test_missing_address(self, base_url, requests_session):
         payload = copy(self.payload)
-        del payload["personalisation"]
+        del payload["display_address"]
         res = requests_session.post(base_url, json=payload)
         assert res.status_code == 400
         assert res.text == "Notify request failed"
