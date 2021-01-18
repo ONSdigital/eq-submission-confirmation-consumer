@@ -10,10 +10,10 @@ Local development uses Pipenv to manage the Python environment. Make sure you ha
 
 There are two environment variables required to run the function:
 
-- NOTIFY_TEMPLATE_ID (the id of the email template that will be sent to users).
+- NOTIFY_TEST_TEMPLATE_ID (the id of the email template that will be sent to users).
 - NOTIFY_API_KEY (the key used to authenticate with Gov Notify - make sure to use a test key for local dev).
 
-NOTIFY_TEMPLATE_ID is provided via the .development.env file, but you will need to set the NOTIFY_API_KEY yourself as it is not kept in version control.
+NOTIFY_TEST_TEMPLATE_ID is provided via the .development.env file, but you will need to set the NOTIFY_API_KEY yourself as it is not kept in version control.
 
 ## Deployment from local machine
 

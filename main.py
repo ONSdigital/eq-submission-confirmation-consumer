@@ -14,7 +14,6 @@ session = Session()
 
 
 NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
-NOTIFY_TEMPLATE_ID = os.getenv("NOTIFY_TEMPLATE_ID")
 
 template_id_mapping = {
     ("HH", "Eng", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
@@ -53,8 +52,11 @@ def notify(request: Request) -> Tuple[str, int]:
         return "Missing region_code identifier", 422
 
     template_id = template_id_mapping.get(
-        (form_type, language_code, region_code), NOTIFY_TEMPLATE_ID
+        (form_type, language_code, region_code), os.getenv("NOTIFY_TEST_TEMPLATE_ID")
     )
+
+    if not template_id:
+        return "No template id selected", 422
 
     data_fields = ("email_address", "personalisation")
     return send_email(

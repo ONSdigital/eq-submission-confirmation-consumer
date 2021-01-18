@@ -1,3 +1,4 @@
+import os
 import random
 import string
 from unittest.mock import Mock
@@ -6,7 +7,7 @@ from uuid import uuid4
 import responses
 from notifications_python_client import __version__
 
-from main import NOTIFY_API_KEY, NOTIFY_TEMPLATE_ID, notify, send_email
+from main import notify, send_email
 
 url = "https://api.notifications.service.gov.uk/v2/notifications/email"
 success_json = {
@@ -40,14 +41,16 @@ def test_missing_data_returns_422():
 
 def test_send_email_invalid_service_id():
     random_string = "".join(random.choice(string.printable) for i in range(87))
-    result = send_email(random_string, {}, NOTIFY_TEMPLATE_ID)
+    result = send_email(random_string, {}, os.getenv("NOTIFY_TEST_TEMPLATE_ID"))
     assert result == ("Service ID is not a valid uuid", 422)
 
 
 def test_send_email_invalid_api_key():
     random_string = "".join(random.choice(string.printable) for i in range(37))
     uuid_string = str(uuid4())
-    result = send_email(uuid_string + random_string, {}, NOTIFY_TEMPLATE_ID)
+    result = send_email(
+        uuid_string + random_string, {}, os.getenv("NOTIFY_TEST_TEMPLATE_ID")
+    )
     assert result == ("API key is not a valid uuid", 422)
 
 
@@ -166,3 +169,22 @@ def test_missing_region_code():
     )
     response = notify(request)
     assert response == ("Missing region_code identifier", 422)
+
+
+@responses.activate
+def test_no_valid_template_selected():
+    os.environ["NOTIFY_TEST_TEMPLATE_ID"] = ""
+    request = Mock(
+        method="POST",
+        json={
+            "email_address": "test@example.com",
+            "personalisation": {"address": "test address"},
+            "test": [],
+            "form_type": "not-a-form-type",
+            "language_code": "not-a-key",
+            "region_code": "not-a-region-code",
+        },
+    )
+
+    response = notify(request)
+    assert response == ("No template id selected", 422)
