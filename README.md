@@ -15,6 +15,8 @@ There are two environment variables required to run the function:
 
 NOTIFY_TEST_TEMPLATE_ID is provided via the .development.env file, but you will need to set the NOTIFY_API_KEY yourself as it is not kept in version control.
 
+The TCP port defaults to port `8080` but can be overriden by setting the `PORT` env var.
+
 ## Deployment from local machine
 
 For development purposes it is possible to deploy the function to GCP from a local machine using the `gcloud` command. First login using `gcloud auth login`, then set the application default credentials using `gcloud auth application-default login`. Be sure to make the current gcloud project id the one you wish to deploy to `gcloud config set project <your-project-id>`
