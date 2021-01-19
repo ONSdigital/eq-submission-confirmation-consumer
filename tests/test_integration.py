@@ -5,6 +5,8 @@ import pytest
 import requests
 from urllib3.util.retry import Retry
 
+from main import NOTIFY_BASE_URL
+
 expected = {
     "content": {
         "body": "# Thanks for submitting the census\r\nYour census has been submitted for the household at My House, at the end of my street.\r\n\r\n^Your personal information is protected by law and will be kept confidential. \r\n\r\nIf you have any questions about the census, visit https://www.census.gov.uk\r\n\r\n---\r\n\r\nThe Office for National Statistics (ONS) is responsible for planning and running the census in England and Wales. You can find out more about ONS at https://www.ons.gov.uk/",
@@ -19,7 +21,7 @@ expected = {
         "uri": "https://api.notifications.service.gov.uk/services/0e515090-7962-40e8-a8c7-acbacf079c21/templates/0c5a4f95-bfa4-4364-9394-8499b4d777d5",
         "version": 1,
     },
-    "uri": "https://api.notifications.service.gov.uk/v2/notifications/9e5020e2-35f5-4ee4-9ec9-789c7e433bfe",
+    "uri": f"{NOTIFY_BASE_URL}/notifications/9e5020e2-35f5-4ee4-9ec9-789c7e433bfe",
 }
 
 

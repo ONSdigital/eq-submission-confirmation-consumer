@@ -7,9 +7,10 @@ from uuid import uuid4
 import responses
 from notifications_python_client import __version__
 
-from main import notify, send_email
+from main import notify, send_email, NOTIFY_BASE_URL
 
-url = "https://api.notifications.service.gov.uk/v2/notifications/email"
+url = f"{NOTIFY_BASE_URL}/notifications/email"
+
 success_json = {
     "id": "740e5834-3a29-46b4-9a6f-16142fde533a",
     "reference": "STRING",
@@ -18,11 +19,11 @@ success_json = {
         "body": "MESSAGE TEXT",
         "from_email": "SENDER EMAIL",
     },
-    "uri": "https://api.notifications.service.gov.uk/v2/notifications/740e5834-3a29-46b4-9a6f-16142fde533a",
+    "uri": f"{NOTIFY_BASE_URL}/notifications/740e5834-3a29-46b4-9a6f-16142fde533a",
     "template": {
         "id": "f33517ff-2a88-4f6e-b855-c550268ce08a",
         "version": __version__,
-        "uri": "https://api.notifications.service.gov.uk/v2/template/f33517ff-2a88-4f6e-b855-c550268ce08a",
+        "uri": f"{NOTIFY_BASE_URL}/template/f33517ff-2a88-4f6e-b855-c550268ce08a",
     },
 }
 

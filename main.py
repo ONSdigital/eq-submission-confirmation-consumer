@@ -15,6 +15,8 @@ session = Session()
 
 NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
 
+NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
+
 template_id_mapping = {
     ("HH", "GB-ENG", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
     ("HH", "GB-WLS", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
@@ -117,7 +119,7 @@ def send_email(api_key: str, data: Dict, template_id: str) -> Tuple[str, int]:
 
     try:
         response = session.post(
-            "https://api.notifications.service.gov.uk/v2/notifications/email",
+            f"{NOTIFY_BASE_URL}/notifications/email",
             kwargs,
         )
         response.raise_for_status()
