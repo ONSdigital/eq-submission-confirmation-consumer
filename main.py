@@ -42,6 +42,8 @@ def notify(request: Request) -> Tuple[str, int]:
     if not (data := request.json):
         return "Missing notification request data", 422
 
+    data = request.json["fulfilmentRequest"]
+
     if not (form_type := data.get("form_type")):
         return "Missing form_type identifier", 422
 
@@ -52,7 +54,7 @@ def notify(request: Request) -> Tuple[str, int]:
         return "Missing region_code identifier", 422
 
     template_id = template_id_mapping.get(
-        (form_type, language_code, region_code), os.getenv("NOTIFY_TEST_TEMPLATE_ID")
+        (form_type, region_code, language_code), os.getenv("NOTIFY_TEST_TEMPLATE_ID")
     )
 
     if not template_id:

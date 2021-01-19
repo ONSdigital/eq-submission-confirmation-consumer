@@ -26,11 +26,13 @@ expected = {
 @pytest.mark.usefixtures("notify_function_process")
 class TestNotify:
     payload = {
-        "email_address": "test@example.com",
-        "display_address": "My House, at the end of my street",
-        "form_type": "HH",
-        "language_code": "en",
-        "region_code": "Eng",
+        "fulfilmentRequest": {
+            "email_address": "test@example.com",
+            "display_address": "My House, at the end of my street",
+            "form_type": "HH",
+            "language_code": "en",
+            "region_code": "Eng",
+        }
     }
 
     def test_successful(self, base_url, requests_session):
@@ -52,14 +54,14 @@ class TestNotify:
 
     def test_missing_address(self, base_url, requests_session):
         payload = copy(self.payload)
-        del payload["display_address"]
+        del payload["fulfilmentRequest"]["display_address"]
         res = requests_session.post(base_url, json=payload)
         assert res.status_code == 400
         assert res.text == "Notify request failed"
 
     def test_missing_email(self, base_url, requests_session):
         payload = copy(self.payload)
-        del payload["email_address"]
+        del payload["fulfilmentRequest"]["email_address"]
         res = requests_session.post(base_url, json=payload)
         assert res.status_code == 400
         assert res.text == "Notify request failed"

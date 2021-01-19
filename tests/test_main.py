@@ -59,11 +59,13 @@ def test_notify_response_error_returns_correctly():
     request = Mock(
         method="POST",
         json={
-            "email_address": "test@example.com",
-            "personalisation": {"address": "test address"},
-            "form_type": "HH",
-            "language_code": "en",
-            "region_code": "Eng",
+            "fulfilmentRequest": {
+                "email_address": "test@example.com",
+                "personalisation": {"address": "test address"},
+                "form_type": "HH",
+                "language_code": "en",
+                "region_code": "Eng",
+            }
         },
     )
     responses.add(responses.POST, url, json={"errors": "403"}, status=403)
@@ -76,11 +78,13 @@ def test_notify_response_no_content_204():
     request = Mock(
         method="POST",
         json={
-            "email_address": "test@example.com",
-            "personalisation": {"address": "test address"},
-            "form_type": "HH",
-            "language_code": "en",
-            "region_code": "Eng",
+            "fulfilmentRequest": {
+                "email_address": "test@example.com",
+                "personalisation": {"address": "test address"},
+                "form_type": "HH",
+                "language_code": "en",
+                "region_code": "Eng",
+            },
         },
     )
     responses.add(responses.POST, url, json={}, status=204)
@@ -93,11 +97,13 @@ def test_notify_response_json_decode_error():
     request = Mock(
         method="POST",
         json={
-            "email_address": "test@example.com",
-            "personalisation": {"address": "test address"},
-            "form_type": "HH",
-            "language_code": "en",
-            "region_code": "Eng",
+            "fulfilmentRequest": {
+                "email_address": "test@example.com",
+                "personalisation": {"address": "test address"},
+                "form_type": "HH",
+                "language_code": "en",
+                "region_code": "Eng",
+            },
         },
     )
     responses.add(responses.POST, url, status=200)
@@ -110,12 +116,14 @@ def test_send_email():
     request = Mock(
         method="POST",
         json={
-            "email_address": "test@example.com",
-            "personalisation": {"address": "test address"},
-            "test": [],
-            "form_type": "HH",
-            "language_code": "en",
-            "region_code": "Eng",
+            "fulfilmentRequest": {
+                "email_address": "test@example.com",
+                "personalisation": {"address": "test address"},
+                "test": [],
+                "form_type": "HH",
+                "language_code": "en",
+                "region_code": "Eng",
+            },
         },
     )
     responses.add(responses.POST, url, json=success_json, status=200)
@@ -128,11 +136,13 @@ def test_missing_form_type():
     request = Mock(
         method="POST",
         json={
-            "email_address": "test@example.com",
-            "personalisation": {"address": "test address"},
-            "test": [],
-            "language_code": "en",
-            "region_code": "Eng",
+            "fulfilmentRequest": {
+                "email_address": "test@example.com",
+                "personalisation": {"address": "test address"},
+                "test": [],
+                "language_code": "en",
+                "region_code": "Eng",
+            },
         },
     )
     response = notify(request)
@@ -144,11 +154,13 @@ def test_missing_language_code():
     request = Mock(
         method="POST",
         json={
-            "email_address": "test@example.com",
-            "personalisation": {"address": "test address"},
-            "test": [],
-            "form_type": "HH",
-            "region_code": "Eng",
+            "fulfilmentRequest": {
+                "email_address": "test@example.com",
+                "personalisation": {"address": "test address"},
+                "test": [],
+                "form_type": "HH",
+                "region_code": "Eng",
+            },
         },
     )
     response = notify(request)
@@ -160,11 +172,13 @@ def test_missing_region_code():
     request = Mock(
         method="POST",
         json={
-            "email_address": "test@example.com",
-            "personalisation": {"address": "test address"},
-            "test": [],
-            "form_type": "HH",
-            "language_code": "en",
+            "fulfilmentRequest": {
+                "email_address": "test@example.com",
+                "personalisation": {"address": "test address"},
+                "test": [],
+                "form_type": "HH",
+                "language_code": "en",
+            },
         },
     )
     response = notify(request)
@@ -177,12 +191,14 @@ def test_no_valid_template_selected():
     request = Mock(
         method="POST",
         json={
-            "email_address": "test@example.com",
-            "personalisation": {"address": "test address"},
-            "test": [],
-            "form_type": "not-a-form-type",
-            "language_code": "not-a-key",
-            "region_code": "not-a-region-code",
+            "fulfilmentRequest": {
+                "email_address": "test@example.com",
+                "personalisation": {"address": "test address"},
+                "test": [],
+                "form_type": "not-a-form-type",
+                "language_code": "not-a-key",
+                "region_code": "not-a-region-code",
+            },
         },
     )
 
