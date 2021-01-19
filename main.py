@@ -16,21 +16,21 @@ session = Session()
 NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
 
 template_id_mapping = {
-    ("HH", "Eng", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
-    ("HH", "Wls", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
-    ("HH", "Wls", "cy"): "755d73d1-0cb6-4f2f-95e9-857a2ad071bb",
-    ("HH", "Nir", "en"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
-    ("HH", "Nir", "ga"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
-    ("HH", "Nir", "eo"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
-    ("HI", "Eng", "en"): "71de56dc-f83b-4899-93ab-7fe61e417c2e",
-    ("HI", "Wls", "en"): "71de56dc-f83b-4899-93ab-7fe61e417c2e",
-    ("HI", "Wls", "cy"): "1001ac43-093d-425c-ac7d-68df5147c603",
-    ("HI", "Nir", "en"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
-    ("HI", "Nir", "ga"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
-    ("HI", "Nir", "eo"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
-    ("CE", "Eng", "en"): "4077d2cf-81cd-462d-9065-f227a7c39a8d",
-    ("CE", "Wls", "en"): "4077d2cf-81cd-462d-9065-f227a7c39a8d",
-    ("CE", "Wls", "cy"): "e4a4ebea-fcc8-463b-8686-5b8a7320f089",
+    ("HH", "GB-ENG", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
+    ("HH", "GB-WLS", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
+    ("HH", "GB-WLS", "cy"): "755d73d1-0cb6-4f2f-95e9-857a2ad071bb",
+    ("HH", "GB-NIR", "en"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
+    ("HH", "GB-NIR", "ga"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
+    ("HH", "GB-NIR", "eo"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
+    ("HI", "GB-ENG", "en"): "71de56dc-f83b-4899-93ab-7fe61e417c2e",
+    ("HI", "GB-WLS", "en"): "71de56dc-f83b-4899-93ab-7fe61e417c2e",
+    ("HI", "GB-WLS", "cy"): "1001ac43-093d-425c-ac7d-68df5147c603",
+    ("HI", "GB-NIR", "en"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
+    ("HI", "GB-NIR", "ga"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
+    ("HI", "GB-NIR", "eo"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
+    ("CE", "GB-ENG", "en"): "4077d2cf-81cd-462d-9065-f227a7c39a8d",
+    ("CE", "GB-WLS", "en"): "4077d2cf-81cd-462d-9065-f227a7c39a8d",
+    ("CE", "GB-WLS", "cy"): "e4a4ebea-fcc8-463b-8686-5b8a7320f089",
 }
 
 
