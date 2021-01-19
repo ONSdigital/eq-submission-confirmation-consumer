@@ -17,8 +17,8 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Install Pipenv
         run: pip install pipenv
-      - name: Install virtual environment
-        run: make build
+      - name: Install virtual environment with dev dependencies
+        run: make install-dev
       - name: Running lint tests
         env:
           NOTIFY_API_KEY: ${{ secrets.NOTIFY_API_KEY }}

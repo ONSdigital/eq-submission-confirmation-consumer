@@ -12,11 +12,12 @@ help:
 	@echo " * make run-debug ... run locally using functions-framework"
 
 install:
-	pipenv install --dev
-
-build: install
-	ln -fs .development.env .env
+	pipenv install
 	pipenv lock -r > requirements.txt
+
+install-dev:
+	ln -fs .development.env .env
+	pipenv install --dev
 
 deploy:
 	./scripts/deploy.sh
