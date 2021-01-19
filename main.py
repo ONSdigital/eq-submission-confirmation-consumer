@@ -39,6 +39,9 @@ data_fields = ("email_address", "display_address", "tx_id", "questionnaire_id")
 # pylint: disable=too-many-return-statements
 def notify(request: Request) -> Tuple[str, int]:
     if not request.method == "POST":
+        # Note that Cloud Functions expect serialized JSON
+        # to correctly log
+        # https://cloud.google.com/functions/docs/monitoring/logging#writing_structured_logs
         msg = "Method not allowed"
         print(json.dumps({"severity": "ERROR", "message": msg}))
         return msg, 405
