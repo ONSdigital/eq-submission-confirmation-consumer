@@ -33,34 +33,52 @@ template_id_mapping = {
     ("CE", "GB-WLS", "cy"): "e4a4ebea-fcc8-463b-8686-5b8a7320f089",
 }
 
+data_fields = ("email_address", "display_address", "tx_id", "questionnaire_id")
+
 
 # pylint: disable=too-many-return-statements
 def notify(request: Request) -> Tuple[str, int]:
     if not request.method == "POST":
-        return "Method not allowed", 405
+        msg = "Method not allowed"
+        print(json.dumps({"severity": "ERROR", "message": msg}))
+        return msg, 405
 
     if not (data := request.json):
-        return "Missing notification request data", 422
+        msg = "Missing notification request data"
+        print(json.dumps({"severity": "ERROR", "message": msg}))
+        return msg, 422
 
     data = request.json["fulfilmentRequest"]
 
+    entry = {
+        "tx_id": data.get("tx_id"),
+        "questionnaire_id": data.get("questionnaire_id"),
+    }
+
     if not (form_type := data.get("form_type")):
-        return "Missing form_type identifier", 422
+        msg = "Missing form_type identifier"
+        print(json.dumps({**entry, **{"severity": "ERROR", "message": msg}}))
+        return msg, 422
 
     if not (language_code := data.get("language_code")):
-        return "Missing language_code identifier", 422
+        msg = "Missing language_code identifier"
+        print(json.dumps({**entry, **{"severity": "ERROR", "message": msg}}))
+        return msg, 422
 
     if not (region_code := data.get("region_code")):
-        return "Missing region_code identifier", 422
+        msg = "Missing region_code identifier"
+        print(json.dumps({**entry, **{"severity": "ERROR", "message": msg}}))
+        return msg, 422
 
     template_id = template_id_mapping.get(
         (form_type, region_code, language_code), os.getenv("NOTIFY_TEST_TEMPLATE_ID")
     )
 
     if not template_id:
-        return "No template id selected", 422
+        msg = "No template id selected"
+        print(json.dumps({**entry, **{"severity": "ERROR", "message": msg}}))
+        return msg, 422
 
-    data_fields = ("email_address", "display_address", "tx_id", "questionnaire_id")
     return send_email(
         NOTIFY_API_KEY, {key: data.get(key) for key in data_fields}, template_id
     )
