@@ -3,7 +3,6 @@ import os
 from typing import Dict, Tuple
 from uuid import UUID
 
-import simplejson as json
 from flask import Request
 from notifications_python_client import __version__
 from notifications_python_client.authentication import create_jwt_token

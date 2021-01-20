@@ -2,13 +2,12 @@
 
 help:
 	@echo "[Usage] available commands:"
-	@echo " * make install ... install required packages"
-	@echo " * make build ... install required packages and create a requirements.txt"
+	@echo " * make install ... install required packages and create a requirements.txt"
+	@echo " * make install-dev ... install packages reuired for development"
 	@echo " * make deploy ... deploy the function to a GCP project"
 	@echo " * make format ... format python code"
 	@echo " * make lint ... lint python code"
 	@echo " * make test ... test python code"
-	@echo " * make test-unit ... run unit tests"
 	@echo " * make run-debug ... run locally using functions-framework"
 
 install:
