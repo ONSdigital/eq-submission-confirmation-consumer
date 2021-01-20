@@ -65,7 +65,7 @@ def test_notify_response_error_returns_correctly():
                 "personalisation": {"address": "test address"},
                 "form_type": "HH",
                 "language_code": "en",
-                "region_code": "Eng",
+                "region_code": "GB-ENG",
             }
         },
     )
@@ -84,7 +84,7 @@ def test_notify_response_no_content_204():
                 "personalisation": {"address": "test address"},
                 "form_type": "HH",
                 "language_code": "en",
-                "region_code": "Eng",
+                "region_code": "GB-ENG",
             },
         },
     )
@@ -103,7 +103,7 @@ def test_notify_response_json_decode_error():
                 "personalisation": {"address": "test address"},
                 "form_type": "HH",
                 "language_code": "en",
-                "region_code": "Eng",
+                "region_code": "GB-ENG",
             },
         },
     )
@@ -123,7 +123,7 @@ def test_send_email():
                 "test": [],
                 "form_type": "HH",
                 "language_code": "en",
-                "region_code": "Eng",
+                "region_code": "GB-ENG",
             },
         },
     )
@@ -142,7 +142,7 @@ def test_missing_form_type():
                 "personalisation": {"address": "test address"},
                 "test": [],
                 "language_code": "en",
-                "region_code": "Eng",
+                "region_code": "GB-ENG",
             },
         },
     )
@@ -160,7 +160,7 @@ def test_missing_language_code():
                 "personalisation": {"address": "test address"},
                 "test": [],
                 "form_type": "HH",
-                "region_code": "Eng",
+                "region_code": "GB-ENG",
             },
         },
     )

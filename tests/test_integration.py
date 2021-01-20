@@ -33,7 +33,7 @@ class TestNotify:
             "display_address": "My House, at the end of my street",
             "form_type": "HH",
             "language_code": "en",
-            "region_code": "Eng",
+            "region_code": "GB-ENG",
         }
     }
 

@@ -1,4 +1,5 @@
 # pylint: disable=superfluous-parens
+import json
 import os
 from typing import Dict, Tuple
 from uuid import UUID
@@ -51,7 +52,7 @@ def notify(request: Request) -> Tuple[str, int]:
         log_entry(severity="ERROR", message=msg)
         return msg, 405
 
-    if not (data := request.json):
+    if not request.json:
         msg = "Missing notification request data"
         log_entry(severity="ERROR", message=msg)
         return msg, 422
