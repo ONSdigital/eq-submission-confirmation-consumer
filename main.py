@@ -88,17 +88,15 @@ def _validate_request(request: Request) -> Tuple[Mapping, str, Mapping]:
         "questionnaire_id": data.get("questionnaire_id"),
     }
 
-    if not (form_type := data.get("form_type")):
-        raise InvalidRequestError("Missing form_type identifier", 422, log_context)
-
-    if not (language_code := data.get("language_code")):
-        raise InvalidRequestError("Missing language_code identifier", 422, log_context)
-
-    if not (region_code := data.get("region_code")):
-        raise InvalidRequestError("Missing region_code identifier", 422, log_context)
+    required_keys = ("form_type", "region_code", "language_code")
+    for required_key in required_keys:
+        if not data.get(required_key):
+            msg = f"Missing {required_key} identifier"
+            raise InvalidRequestError(msg, 422)
 
     template_id = template_id_mapping.get(
-        (form_type, region_code, language_code), os.getenv("NOTIFY_TEST_TEMPLATE_ID")
+        (data["form_type"], data["region_code"], data["language_code"]),
+        os.getenv("NOTIFY_TEST_TEMPLATE_ID"),
     )
 
     if not template_id:
