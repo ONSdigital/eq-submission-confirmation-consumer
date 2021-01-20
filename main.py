@@ -1,7 +1,6 @@
-import calendar
 import json
 import os
-import time
+from datetime import datetime, timezone
 from typing import Mapping, Tuple
 from uuid import UUID
 
@@ -23,7 +22,7 @@ def log_error(**kwargs):
 
 def _create_jwt_token(secret: str, client_id: str) -> str:
     headers = {"typ": "JWT", "alg": "HS256"}
-    claims = {"iss": client_id, "iat": calendar.timegm(time.gmtime())}
+    claims = {"iss": client_id, "iat": int(datetime.now(timezone.utc).timestamp())}
     return jwt.encode(payload=claims, key=secret, headers=headers)
 
 
