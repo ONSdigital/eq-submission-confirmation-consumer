@@ -3,7 +3,7 @@ if [[ -z "$NOTIFY_API_KEY" ]]; then
     echo "NOTIFY_API_KEY must be provided" 1>&2
     exit 1
 fi
-if [[ -z "$NOTIFY_TEST_TEMPLATE" ]]; then
+if [[ -z "$NOTIFY_TEST_TEMPLATE_ID" ]]; then
     echo "NOTIFY_TEST_TEMPLATE must be provided" 1>&2
     exit 1
 fi
