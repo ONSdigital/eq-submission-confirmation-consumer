@@ -49,7 +49,6 @@ def _is_valid_uuid(identifier: str) -> bool:
 
 
 NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
-api_token = create_notify_token(NOTIFY_API_KEY)
 
 NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
 
@@ -119,6 +118,7 @@ def send_email(request: Request) -> Tuple[str, int]:
         log_error(message=error.message, **log_context)
         return error.message, error.status_code
 
+    api_token = create_notify_token(NOTIFY_API_KEY)
     session.headers.update(
         {
             "Content-type": "application/json",
