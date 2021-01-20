@@ -18,7 +18,7 @@ install-dev:
 	ln -fs .development.env .env
 	pipenv install --dev
 
-deploy:
+deploy: install
 	./scripts/deploy.sh
 
 format:
