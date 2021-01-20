@@ -22,15 +22,15 @@ def log_error(**kwargs):
 
 def create_notify_token(key: str) -> str:
     service_id = key[-73:-37]
-    api_key = key[-36:]
+    secret_key = key[-36:]
 
     if not _is_valid_uuid(service_id):
         raise InvalidNotifyKeyError("Service ID is not a valid uuid")
 
-    if not _is_valid_uuid(api_key):
+    if not _is_valid_uuid(secret_key):
         raise InvalidNotifyKeyError("API key is not a valid uuid")
 
-    return create_jwt_token(api_key, service_id)
+    return create_jwt_token(secret_key, service_id)
 
 
 def _is_valid_uuid(identifier: str) -> bool:
