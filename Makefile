@@ -3,7 +3,7 @@
 help:
 	@echo "[Usage] available commands:"
 	@echo " * make install ... install required packages and create a requirements.txt"
-	@echo " * make install-dev ... install packages reuired for development"
+	@echo " * make install-dev ... install packages required for development"
 	@echo " * make deploy ... deploy the function to a GCP project"
 	@echo " * make format ... format python code"
 	@echo " * make lint ... lint python code"
