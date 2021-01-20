@@ -59,24 +59,37 @@ def notify(request: Request) -> Tuple[str, int]:
 
     data = request.json["fulfilmentRequest"]
 
-    entry = {
-        "tx_id": data.get("tx_id"),
-        "questionnaire_id": data.get("questionnaire_id"),
-    }
+    tx_id = data.get("tx_id")
+    questionnaire_id = data.get("questionnaire_id")
 
     if not (form_type := data.get("form_type")):
         msg = "Missing form_type identifier"
-        log_entry(severity="ERROR", message=msg, **entry)
+        log_entry(
+            severity="ERROR",
+            message=msg,
+            tx_id=tx_id,
+            questionnaire_id=questionnaire_id,
+        )
         return msg, 422
 
     if not (language_code := data.get("language_code")):
         msg = "Missing language_code identifier"
-        log_entry(severity="ERROR", message=msg, **entry)
+        log_entry(
+            severity="ERROR",
+            message=msg,
+            tx_id=tx_id,
+            questionnaire_id=questionnaire_id,
+        )
         return msg, 422
 
     if not (region_code := data.get("region_code")):
         msg = "Missing region_code identifier"
-        log_entry(severity="ERROR", message=msg, **entry)
+        log_entry(
+            severity="ERROR",
+            message=msg,
+            tx_id=tx_id,
+            questionnaire_id=questionnaire_id,
+        )
         return msg, 422
 
     template_id = template_id_mapping.get(
@@ -85,7 +98,12 @@ def notify(request: Request) -> Tuple[str, int]:
 
     if not template_id:
         msg = "No template id selected"
-        log_entry(severity="ERROR", message=msg, **entry)
+        log_entry(
+            severity="ERROR",
+            message=msg,
+            tx_id=tx_id,
+            questionnaire_id=questionnaire_id,
+        )
         return msg, 422
 
     return send_email(
