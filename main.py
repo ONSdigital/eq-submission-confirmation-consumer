@@ -38,6 +38,10 @@ template_id_mapping = {
 data_fields = ("email_address", "display_address", "tx_id", "questionnaire_id")
 
 
+def log_entry(**kwargs):
+    print(json.dumps(kwargs))
+
+
 # pylint: disable=too-many-return-statements
 def notify(request: Request) -> Tuple[str, int]:
     if not request.method == "POST":
@@ -45,12 +49,12 @@ def notify(request: Request) -> Tuple[str, int]:
         # to correctly log
         # https://cloud.google.com/functions/docs/monitoring/logging#writing_structured_logs
         msg = "Method not allowed"
-        print(json.dumps({"severity": "ERROR", "message": msg}))
+        log_entry(severity="ERROR", message=msg)
         return msg, 405
 
     if not (data := request.json):
         msg = "Missing notification request data"
-        print(json.dumps({"severity": "ERROR", "message": msg}))
+        log_entry(severity="ERROR", message=msg)
         return msg, 422
 
     data = request.json["fulfilmentRequest"]
@@ -62,17 +66,17 @@ def notify(request: Request) -> Tuple[str, int]:
 
     if not (form_type := data.get("form_type")):
         msg = "Missing form_type identifier"
-        print(json.dumps({**entry, **{"severity": "ERROR", "message": msg}}))
+        log_entry(severity="ERROR", message=msg, **entry)
         return msg, 422
 
     if not (language_code := data.get("language_code")):
         msg = "Missing language_code identifier"
-        print(json.dumps({**entry, **{"severity": "ERROR", "message": msg}}))
+        log_entry(severity="ERROR", message=msg, **entry)
         return msg, 422
 
     if not (region_code := data.get("region_code")):
         msg = "Missing region_code identifier"
-        print(json.dumps({**entry, **{"severity": "ERROR", "message": msg}}))
+        log_entry(severity="ERROR", message=msg, **entry)
         return msg, 422
 
     template_id = template_id_mapping.get(
@@ -81,7 +85,7 @@ def notify(request: Request) -> Tuple[str, int]:
 
     if not template_id:
         msg = "No template id selected"
-        print(json.dumps({**entry, **{"severity": "ERROR", "message": msg}}))
+        log_entry(severity="ERROR", message=msg, **entry)
         return msg, 422
 
     return send_email(
@@ -129,7 +133,7 @@ def send_email(api_key: str, data: Dict, template_id: str) -> Tuple[str, int]:
             tx_id=data.get("tx_id"),
             questionnaire_id=data.get("questionnaire_id"),
         )
-        print(json.dumps(entry))
+        log_entry(**entry)
     except RequestException as error:
         error_message = error.response.json()["errors"][0]
         status_code = error.response.status_code
@@ -140,7 +144,7 @@ def send_email(api_key: str, data: Dict, template_id: str) -> Tuple[str, int]:
             tx_id=data.get("tx_id"),
             questionnaire_id=data.get("questionnaire_id"),
         )
-        print(json.dumps(entry))
+        log_entry(**entry)
         return "Notify request failed", error.response.status_code
 
     if response.status_code == 204:
