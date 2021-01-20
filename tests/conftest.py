@@ -17,7 +17,7 @@ def notify_function_process():
         cwd=cwd,
         stdout=subprocess.PIPE,
         shell=True,
-        preexec_fn=os.setsid,
+        start_new_session=True,
     )
 
     yield process
@@ -33,6 +33,7 @@ def base_url():
     return f"http://localhost:{port}"
 
 
+# pylint: disable=redefined-outer-name
 @pytest.fixture(scope="module")
 def requests_session(base_url):
     retry_policy = Retry(total=6, backoff_factor=6)

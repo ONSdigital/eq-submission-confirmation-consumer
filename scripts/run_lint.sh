@@ -21,14 +21,14 @@ function display_result {
 flake8 --max-complexity 10 --count
 display_result $? 1 "Flake 8 code style check"
 
-pylint --reports=n --output-format=colorized --rcfile=.pylintrc -j 0 *.py
+pylint --reports=n --output-format=colorized --rcfile=.pylintrc -j 0 *.py tests/
 display_result $? 2 "Pylint linting check"
 
-isort --check .
+isort --check . tests/
 display_result $? 1 "isort linting check"
 
 ./scripts/run_mypy.sh
 display_result $? 1 "Mypy type check"
 
-black --check .
+black --check . tests/
 display_result $? 1 "Python code formatting check"

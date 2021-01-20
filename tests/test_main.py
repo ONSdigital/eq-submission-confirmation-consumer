@@ -1,7 +1,6 @@
 import os
 import random
 import string
-from unittest import result
 from unittest.mock import Mock
 from uuid import uuid4
 

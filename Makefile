@@ -22,8 +22,8 @@ deploy: install
 	./scripts/deploy.sh
 
 format:
-	pipenv run black .
-	pipenv run isort .
+	pipenv run black . tests
+	pipenv run isort . tests
 
 lint:
 	pipenv run ./scripts/run_lint.sh

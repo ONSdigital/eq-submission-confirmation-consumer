@@ -1,13 +1,22 @@
-import os
 from copy import copy
 
 import pytest
 
 from main import NOTIFY_BASE_URL
 
+body = (
+    "# Thanks for submitting the census\r\n"
+    "Your census has been submitted for the household at My House, at the end of my street.\r\n\r\n"
+    "^Your personal information is protected by law and will be kept confidential. \r\n\r\n"
+    "If you have any questions about the census, visit "
+    "https://www.census.gov.uk\r\n\r\n---\r\n\r\nThe Office for National Statistics (ONS) "
+    "is responsible for planning and running the census in England and Wales. "
+    "You can find out more about ONS at https://www.ons.gov.uk/"
+)
+
 expected = {
     "content": {
-        "body": "# Thanks for submitting the census\r\nYour census has been submitted for the household at My House, at the end of my street.\r\n\r\n^Your personal information is protected by law and will be kept confidential. \r\n\r\nIf you have any questions about the census, visit https://www.census.gov.uk\r\n\r\n---\r\n\r\nThe Office for National Statistics (ONS) is responsible for planning and running the census in England and Wales. You can find out more about ONS at https://www.ons.gov.uk/",
+        "body": body,
         "from_email": "census.2021@notifications.service.gov.uk",
         "subject": "Confirmation – your census has been submitted",
     },
@@ -28,7 +37,7 @@ class TestNotify:
     payload = {
         "payload": {
             "fulfilmentRequest": {
-                "email_address": "test@example.com",
+                "email_address": "simulate-delivered@notifications.service.gov.uk",
                 "display_address": "My House, at the end of my street",
                 "form_type": "HH",
                 "language_code": "en",
