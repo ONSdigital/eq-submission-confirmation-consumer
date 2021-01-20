@@ -89,10 +89,9 @@ def _validate_request(request: Request) -> Tuple[Mapping, str, Mapping]:
     }
 
     required_keys = ("form_type", "region_code", "language_code")
-    for required_key in required_keys:
-        if not data.get(required_key):
-            msg = f"Missing {required_key} identifier"
-            raise InvalidRequestError(msg, 422)
+    if missing_keys := [key for key in required_keys if not data.get(key)]:
+        msg = f"Missing {', '.join(missing_keys)} identifier(s)"
+        raise InvalidRequestError(msg, 422)
 
     template_id = template_id_mapping.get(
         (data["form_type"], data["region_code"], data["language_code"]),

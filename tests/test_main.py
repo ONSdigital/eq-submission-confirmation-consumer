@@ -158,7 +158,7 @@ def test_missing_form_type():
         },
     )
     response = send_email(request)
-    assert response == ("Missing form_type identifier", 422)
+    assert response == ("Missing form_type identifier(s)", 422)
 
 
 @responses.activate
@@ -178,7 +178,7 @@ def test_missing_language_code():
         },
     )
     response = send_email(request)
-    assert response == ("Missing language_code identifier", 422)
+    assert response == ("Missing language_code identifier(s)", 422)
 
 
 @responses.activate
@@ -198,7 +198,7 @@ def test_missing_region_code():
         },
     )
     response = send_email(request)
-    assert response == ("Missing region_code identifier", 422)
+    assert response == ("Missing region_code identifier(s)", 422)
 
 
 @responses.activate
