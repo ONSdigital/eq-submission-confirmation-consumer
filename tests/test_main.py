@@ -6,7 +6,6 @@ from uuid import uuid4
 
 import pytest
 import responses
-from notifications_python_client import __version__
 
 from exceptions import InvalidNotifyKeyError
 from main import NOTIFY_BASE_URL, create_notify_token, send_email
@@ -24,7 +23,7 @@ success_json = {
     "uri": f"{NOTIFY_BASE_URL}/notifications/740e5834-3a29-46b4-9a6f-16142fde533a",
     "template": {
         "id": "f33517ff-2a88-4f6e-b855-c550268ce08a",
-        "version": __version__,
+        "version": "6.0.1",
         "uri": f"{NOTIFY_BASE_URL}/template/f33517ff-2a88-4f6e-b855-c550268ce08a",
     },
 }

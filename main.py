@@ -1,11 +1,12 @@
+import calendar
 import json
 import os
+import time
 from typing import Mapping, Tuple
 from uuid import UUID
 
+import jwt
 from flask import Request
-from notifications_python_client import __version__
-from notifications_python_client.authentication import create_jwt_token
 from requests import Session
 from requests.exceptions import RequestException
 
@@ -20,7 +21,13 @@ def log_error(**kwargs):
     print(json.dumps({**kwargs, "severity": "ERROR"}))
 
 
-def create_notify_token(key: str) -> str:
+def _create_jwt_token(secret: str, client_id: str) -> str:
+    headers = {"typ": "JWT", "alg": "HS256"}
+    claims = {"iss": client_id, "iat": calendar.timegm(time.gmtime())}
+    return jwt.encode(payload=claims, key=secret, headers=headers)
+
+
+def _create_notify_token(key: str) -> str:
     service_id = key[-73:-37]
     secret_key = key[-36:]
 
@@ -30,7 +37,7 @@ def create_notify_token(key: str) -> str:
     if not _is_valid_uuid(secret_key):
         raise InvalidNotifyKeyError("API key is not a valid uuid")
 
-    return create_jwt_token(secret_key, service_id)
+    return _create_jwt_token(secret_key, service_id)
 
 
 def _is_valid_uuid(identifier: str) -> bool:
@@ -43,7 +50,7 @@ def _is_valid_uuid(identifier: str) -> bool:
 
 
 NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
-api_token = create_notify_token(NOTIFY_API_KEY)
+api_token = _create_notify_token(NOTIFY_API_KEY)
 
 NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
 
@@ -117,7 +124,6 @@ def send_email(request: Request) -> Tuple[str, int]:
         {
             "Content-type": "application/json",
             "Authorization": f"Bearer {api_token}",
-            "User-agent": f"NOTIFY-API-PYTHON-CLIENT/{__version__}",
         }
     )
 
