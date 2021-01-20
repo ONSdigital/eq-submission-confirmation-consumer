@@ -2,8 +2,6 @@ import os
 from copy import copy
 
 import pytest
-import requests
-from urllib3.util.retry import Retry
 
 from main import NOTIFY_BASE_URL
 
@@ -28,12 +26,14 @@ expected = {
 @pytest.mark.usefixtures("notify_function_process")
 class TestNotify:
     payload = {
-        "fulfilmentRequest": {
-            "email_address": "test@example.com",
-            "display_address": "My House, at the end of my street",
-            "form_type": "HH",
-            "language_code": "en",
-            "region_code": "GB-ENG",
+        "payload": {
+            "fulfilmentRequest": {
+                "email_address": "test@example.com",
+                "display_address": "My House, at the end of my street",
+                "form_type": "HH",
+                "language_code": "en",
+                "region_code": "GB-ENG",
+            }
         }
     }
 
@@ -56,14 +56,14 @@ class TestNotify:
 
     def test_missing_address(self, base_url, requests_session):
         payload = copy(self.payload)
-        del payload["fulfilmentRequest"]["display_address"]
+        del payload["payload"]["fulfilmentRequest"]["display_address"]
         res = requests_session.post(base_url, json=payload)
         assert res.status_code == 400
         assert res.text == "Notify request failed"
 
     def test_missing_email(self, base_url, requests_session):
         payload = copy(self.payload)
-        del payload["fulfilmentRequest"]["email_address"]
+        del payload["payload"]["fulfilmentRequest"]["email_address"]
         res = requests_session.post(base_url, json=payload)
         assert res.status_code == 400
         assert res.text == "Notify request failed"

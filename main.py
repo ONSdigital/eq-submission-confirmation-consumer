@@ -1,7 +1,6 @@
-# pylint: disable=superfluous-parens
 import json
 import os
-from typing import Dict, Tuple
+from typing import Mapping, Tuple
 from uuid import UUID
 
 from flask import Request
@@ -10,10 +9,41 @@ from notifications_python_client.authentication import create_jwt_token
 from requests import Session
 from requests.exceptions import RequestException
 
-session = Session()
+from exceptions import InvalidNotifyKeyError, InvalidRequestError
+
+
+def log_info(**kwargs):
+    print(json.dumps({**kwargs, "severity": "INFO"}))
+
+
+def log_error(**kwargs):
+    print(json.dumps({**kwargs, "severity": "ERROR"}))
+
+
+def create_notify_token(key: str) -> str:
+    service_id = key[-73:-37]
+    api_key = key[-36:]
+
+    if not _is_valid_uuid(service_id):
+        raise InvalidNotifyKeyError("Service ID is not a valid uuid")
+
+    if not _is_valid_uuid(api_key):
+        raise InvalidNotifyKeyError("API key is not a valid uuid")
+
+    return create_jwt_token(api_key, service_id)
+
+
+def _is_valid_uuid(identifier: str) -> bool:
+    try:
+        UUID(identifier, version=4)
+    except ValueError:
+        return False
+
+    return True
 
 
 NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
+api_token = create_notify_token(NOTIFY_API_KEY)
 
 NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
 
@@ -38,90 +68,53 @@ template_id_mapping = {
 data_fields = ("email_address", "display_address", "tx_id", "questionnaire_id")
 
 
-def log_entry(**kwargs):
-    print(json.dumps(kwargs))
+session = Session()
 
 
-# pylint: disable=too-many-return-statements
-def notify(request: Request) -> Tuple[str, int]:
+def _validate_request(request: Request) -> Tuple[Mapping, str, Mapping]:
     if not request.method == "POST":
         # Note that Cloud Functions expect serialized JSON
         # to correctly log
         # https://cloud.google.com/functions/docs/monitoring/logging#writing_structured_logs
-        msg = "Method not allowed"
-        log_entry(severity="ERROR", message=msg)
-        return msg, 405
+        raise InvalidRequestError("Method not allowed", 405)
 
     if not request.json:
-        msg = "Missing notification request data"
-        log_entry(severity="ERROR", message=msg)
-        return msg, 422
+        raise InvalidRequestError("Missing notification request data", 422)
 
-    data = request.json["fulfilmentRequest"]
+    data = request.json["payload"]["fulfilmentRequest"]
 
-    tx_id = data.get("tx_id")
-    questionnaire_id = data.get("questionnaire_id")
+    log_context = {
+        "tx_id": data.get("tx_id"),
+        "questionnaire_id": data.get("questionnaire_id"),
+    }
 
     if not (form_type := data.get("form_type")):
-        msg = "Missing form_type identifier"
-        log_entry(
-            severity="ERROR",
-            message=msg,
-            tx_id=tx_id,
-            questionnaire_id=questionnaire_id,
-        )
-        return msg, 422
+        raise InvalidRequestError("Missing form_type identifier", 422, log_context)
 
     if not (language_code := data.get("language_code")):
-        msg = "Missing language_code identifier"
-        log_entry(
-            severity="ERROR",
-            message=msg,
-            tx_id=tx_id,
-            questionnaire_id=questionnaire_id,
-        )
-        return msg, 422
+        raise InvalidRequestError("Missing language_code identifier", 422, log_context)
 
     if not (region_code := data.get("region_code")):
-        msg = "Missing region_code identifier"
-        log_entry(
-            severity="ERROR",
-            message=msg,
-            tx_id=tx_id,
-            questionnaire_id=questionnaire_id,
-        )
-        return msg, 422
+        raise InvalidRequestError("Missing region_code identifier", 422, log_context)
 
     template_id = template_id_mapping.get(
         (form_type, region_code, language_code), os.getenv("NOTIFY_TEST_TEMPLATE_ID")
     )
 
     if not template_id:
-        msg = "No template id selected"
-        log_entry(
-            severity="ERROR",
-            message=msg,
-            tx_id=tx_id,
-            questionnaire_id=questionnaire_id,
-        )
-        return msg, 422
+        raise InvalidRequestError("No template id selected", 422, log_context)
 
-    return send_email(
-        NOTIFY_API_KEY, {key: data.get(key) for key in data_fields}, template_id
-    )
+    return {key: data.get(key) for key in data_fields}, template_id, log_context
 
 
-def send_email(api_key: str, data: Dict, template_id: str) -> Tuple[str, int]:
-    service_id = api_key[-73:-37]
-    api_key = api_key[-36:]
-
-    if not is_valid_uuid(service_id):
-        return "Service ID is not a valid uuid", 422
-
-    if not is_valid_uuid(api_key):
-        return "API key is not a valid uuid", 422
-
-    api_token = create_jwt_token(api_key, service_id)
+# pylint: disable=too-many-return-statements
+def send_email(request: Request) -> Tuple[str, int]:
+    try:
+        data, template_id, log_context = _validate_request(request)
+    except InvalidRequestError as error:
+        log_context = error.log_context if error.log_context else {}
+        log_error(message=error.message, **log_context)
+        return error.message, error.status_code
 
     session.headers.update(
         {
@@ -145,24 +138,16 @@ def send_email(api_key: str, data: Dict, template_id: str) -> Tuple[str, int]:
             kwargs,
         )
         response.raise_for_status()
-        entry = dict(
-            severity="INFO",
-            message="notify email requested",
-            tx_id=data.get("tx_id"),
-            questionnaire_id=data.get("questionnaire_id"),
-        )
-        log_entry(**entry)
+        entry = dict(message="notify email requested", **log_context)
+        log_info(**entry)
     except RequestException as error:
         error_message = error.response.json()["errors"][0]
         status_code = error.response.status_code
-        entry = dict(
-            severity="ERROR",
+        log_error(
             status_code=status_code,
             message=f"notify request failed: {error_message}",
-            tx_id=data.get("tx_id"),
-            questionnaire_id=data.get("questionnaire_id"),
+            **log_context,
         )
-        log_entry(**entry)
         return "Notify request failed", error.response.status_code
 
     if response.status_code == 204:
@@ -172,12 +157,3 @@ def send_email(api_key: str, data: Dict, template_id: str) -> Tuple[str, int]:
         return response.json()
     except ValueError:
         return "Notify JSON response object failed decoding", 503
-
-
-def is_valid_uuid(identifier: str) -> bool:
-    try:
-        UUID(identifier, version=4)
-    except ValueError:
-        return False
-
-    return True

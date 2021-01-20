@@ -32,4 +32,4 @@ test:
 	pipenv run ./scripts/run_tests.sh
 
 run-debug:
-	pipenv run functions-framework --target=notify --debug
+	pipenv run functions-framework --target=send_email --debug
