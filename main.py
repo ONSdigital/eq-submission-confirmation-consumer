@@ -27,7 +27,7 @@ def _create_jwt_token(secret: str, client_id: str) -> str:
     return jwt.encode(payload=claims, key=secret, headers=headers)
 
 
-def _create_notify_token(key: str) -> str:
+def create_notify_token(key: str) -> str:
     service_id = key[-73:-37]
     secret_key = key[-36:]
 
@@ -50,7 +50,7 @@ def _is_valid_uuid(identifier: str) -> bool:
 
 
 NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
-api_token = _create_notify_token(NOTIFY_API_KEY)
+api_token = create_notify_token(NOTIFY_API_KEY)
 
 NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
 
