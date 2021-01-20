@@ -7,7 +7,7 @@ from uuid import uuid4
 import responses
 from notifications_python_client import __version__
 
-from main import notify, send_email, NOTIFY_BASE_URL
+from main import NOTIFY_BASE_URL, notify, send_email
 
 url = f"{NOTIFY_BASE_URL}/notifications/email"
 

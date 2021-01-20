@@ -9,7 +9,7 @@ notifications-python-client = "*"
 simplejson = "*"
 
 [dev-packages]
-black = "*"
+black = "20.8b1"
 mypy = "*"
 pylint = "*"
 pytest = "*"
@@ -24,4 +24,4 @@ python-dotenv = "*"
 python_version = "3.8"
 
 [pipenv]
-allow_prereleases = true
+allow_prereleases = false

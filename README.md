@@ -1,6 +1,6 @@
 # eq-submission-confirmation-consumer
 
-Google Cloud Function that uses an http listener to respond to Cloud Tasks.
+Google Cloud Function that uses an HTTP listener to respond to HTTP requests.
 
 On instantiation the function forwards the request on to Gov Notify, which is responsible for sending the appropriate email.
 
