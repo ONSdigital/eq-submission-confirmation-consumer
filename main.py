@@ -12,6 +12,10 @@ from requests.exceptions import RequestException
 from exceptions import InvalidNotifyKeyError, InvalidRequestError
 
 
+NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
+NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
+
+
 def log_info(**kwargs):
     print(json.dumps({**kwargs, "severity": "INFO"}))
 
@@ -20,23 +24,8 @@ def log_error(**kwargs):
     print(json.dumps({**kwargs, "severity": "ERROR"}))
 
 
-def _create_jwt_token(secret: str, client_id: str) -> str:
-    headers = {"typ": "JWT", "alg": "HS256"}
-    claims = {"iss": client_id, "iat": int(datetime.now(timezone.utc).timestamp())}
-    return jwt.encode(payload=claims, key=secret, headers=headers)
-
-
-def create_notify_token(key: str) -> str:
-    service_id = key[-73:-37]
-    secret_key = key[-36:]
-
-    if not _is_valid_uuid(service_id):
-        raise InvalidNotifyKeyError("Service ID is not a valid uuid")
-
-    if not _is_valid_uuid(secret_key):
-        raise InvalidNotifyKeyError("API key is not a valid uuid")
-
-    return _create_jwt_token(secret_key, service_id)
+service_id = NOTIFY_API_KEY[-73:-37]
+secret_key = NOTIFY_API_KEY[-36:]
 
 
 def _is_valid_uuid(identifier: str) -> bool:
@@ -48,9 +37,18 @@ def _is_valid_uuid(identifier: str) -> bool:
     return True
 
 
-NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
+if not _is_valid_uuid(service_id):
+    raise InvalidNotifyKeyError("Service ID is not a valid uuid")
 
-NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
+if not _is_valid_uuid(secret_key):
+    raise InvalidNotifyKeyError("API key is not a valid uuid")
+
+
+def create_jwt_token(secret: str, client_id: str) -> str:
+    headers = {"typ": "JWT", "alg": "HS256"}
+    claims = {"iss": client_id, "iat": int(datetime.now(timezone.utc).timestamp())}
+    return jwt.encode(payload=claims, key=secret, headers=headers)
+
 
 template_id_mapping = {
     ("H", "GB-ENG", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
@@ -117,7 +115,7 @@ def send_email(request: Request) -> Tuple[str, int]:
         log_error(message=error.message, **log_context)
         return error.message, error.status_code
 
-    api_token = create_notify_token(NOTIFY_API_KEY)
+    api_token = create_jwt_token(secret_key, service_id)
     session.headers.update(
         {
             "Content-type": "application/json",

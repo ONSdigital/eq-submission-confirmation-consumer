@@ -1,3 +1,6 @@
+import os
+from importlib import reload
+from unittest import mock
 import random
 import string
 from unittest.mock import Mock
@@ -7,7 +10,8 @@ import pytest
 import responses
 
 from exceptions import InvalidNotifyKeyError
-from main import NOTIFY_BASE_URL, create_notify_token, send_email
+from main import NOTIFY_BASE_URL, create_jwt_token, send_email
+import main
 
 url = f"{NOTIFY_BASE_URL}/notifications/email"
 
@@ -26,15 +30,17 @@ def test_missing_data_returns_422():
 
 def test_invalid_service_id_raises_invalid_notify_key_error():
     random_string = "".join(random.choice(string.printable) for i in range(87))
-    with pytest.raises(InvalidNotifyKeyError):
-        create_notify_token(random_string)
+    with mock.patch.dict(os.environ, {"NOTIFY_API_KEY": random_string}):
+        with pytest.raises(InvalidNotifyKeyError):
+            reload(main)
 
 
 def test_invalid_api_key_raises_invalid_notify_key_error():
     random_string = "".join(random.choice(string.printable) for i in range(37))
     uuid_string = str(uuid4())
-    with pytest.raises(InvalidNotifyKeyError):
-        create_notify_token(uuid_string + random_string)
+    with mock.patch.dict(os.environ, {"NOTIFY_API_KEY": uuid_string + random_string}):
+        with pytest.raises(InvalidNotifyKeyError):
+            reload(main)
 
 
 @responses.activate
