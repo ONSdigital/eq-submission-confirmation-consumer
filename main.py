@@ -95,12 +95,12 @@ def _validate_request(request: Request) -> Tuple[Mapping, str, Mapping]:
         msg = f"Missing {', '.join(missing_keys)} identifier(s)"
         raise InvalidRequestError(msg, 422, log_context)
 
-    if not (
-        template_id := template_id_mapping.get(
+    try:
+        template_id = template_id_mapping[
             (data["form_type"], data["region_code"], data["language_code"])
-        )
-    ):
-        raise InvalidRequestError("No template id selected", 422, log_context)
+        ]
+    except KeyError as exc:
+        raise InvalidRequestError("No template id selected", 422, log_context) from exc
 
     return {key: data.get(key) for key in data_fields}, template_id, log_context
 
