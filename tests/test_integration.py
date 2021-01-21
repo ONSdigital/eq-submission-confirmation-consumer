@@ -2,8 +2,6 @@ from copy import copy
 
 import pytest
 
-from main import NOTIFY_BASE_URL
-
 
 @pytest.mark.usefixtures("notify_function_process")
 class TestNotify:
@@ -21,7 +19,8 @@ class TestNotify:
 
     def test_successful(self, base_url, requests_session):
         res = requests_session.post(base_url, json=self.payload)
-        assert "Notify request successful", 201
+        assert res.status_code == 201
+        assert res.text == "Notify request successful"
 
     # The following should not return the `expected` json in the payload
     # as the temp failure and permanent failure email address are used
@@ -29,12 +28,12 @@ class TestNotify:
     @pytest.mark.xfail
     def test_temporary_error(self, base_url, requests_session):
         res = requests_session.post(base_url, json=self.payload)
-        assert res.json()["content"] != expected["content"]
+        assert res.status_code != 200
 
     @pytest.mark.xfail
     def test_permanent_error(self, base_url, requests_session):
         res = requests_session.post(base_url, json=self.payload)
-        assert res.json()["content"] != expected["content"]
+        assert res.status_code != 200
 
     def test_missing_address(self, base_url, requests_session):
         payload = copy(self.payload)
