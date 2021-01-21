@@ -53,21 +53,21 @@ NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
 NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
 
 template_id_mapping = {
-    ("HH", "GB-ENG", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
-    ("HH", "GB-WLS", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
-    ("HH", "GB-WLS", "cy"): "755d73d1-0cb6-4f2f-95e9-857a2ad071bb",
-    ("HH", "GB-NIR", "en"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
-    ("HH", "GB-NIR", "ga"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
-    ("HH", "GB-NIR", "eo"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
-    ("HI", "GB-ENG", "en"): "71de56dc-f83b-4899-93ab-7fe61e417c2e",
-    ("HI", "GB-WLS", "en"): "71de56dc-f83b-4899-93ab-7fe61e417c2e",
-    ("HI", "GB-WLS", "cy"): "1001ac43-093d-425c-ac7d-68df5147c603",
-    ("HI", "GB-NIR", "en"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
-    ("HI", "GB-NIR", "ga"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
-    ("HI", "GB-NIR", "eo"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
-    ("CE", "GB-ENG", "en"): "4077d2cf-81cd-462d-9065-f227a7c39a8d",
-    ("CE", "GB-WLS", "en"): "4077d2cf-81cd-462d-9065-f227a7c39a8d",
-    ("CE", "GB-WLS", "cy"): "e4a4ebea-fcc8-463b-8686-5b8a7320f089",
+    ("H", "GB-ENG", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
+    ("H", "GB-WLS", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
+    ("H", "GB-WLS", "cy"): "755d73d1-0cb6-4f2f-95e9-857a2ad071bb",
+    ("H", "GB-NIR", "en"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
+    ("H", "GB-NIR", "ga"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
+    ("H", "GB-NIR", "eo"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
+    ("I", "GB-ENG", "en"): "71de56dc-f83b-4899-93ab-7fe61e417c2e",
+    ("I", "GB-WLS", "en"): "71de56dc-f83b-4899-93ab-7fe61e417c2e",
+    ("I", "GB-WLS", "cy"): "1001ac43-093d-425c-ac7d-68df5147c603",
+    ("I", "GB-NIR", "en"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
+    ("I", "GB-NIR", "ga"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
+    ("I", "GB-NIR", "eo"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
+    ("C", "GB-ENG", "en"): "4077d2cf-81cd-462d-9065-f227a7c39a8d",
+    ("C", "GB-WLS", "en"): "4077d2cf-81cd-462d-9065-f227a7c39a8d",
+    ("C", "GB-WLS", "cy"): "e4a4ebea-fcc8-463b-8686-5b8a7320f089",
 }
 
 data_fields = ("email_address", "display_address", "tx_id", "questionnaire_id")
@@ -96,14 +96,13 @@ def _validate_request(request: Request) -> Tuple[Mapping, str, Mapping]:
     required_keys = ("form_type", "region_code", "language_code")
     if missing_keys := [key for key in required_keys if not data.get(key)]:
         msg = f"Missing {', '.join(missing_keys)} identifier(s)"
-        raise InvalidRequestError(msg, 422)
+        raise InvalidRequestError(msg, 422, log_context)
 
-    template_id = template_id_mapping.get(
-        (data["form_type"], data["region_code"], data["language_code"]),
-        os.getenv("NOTIFY_TEST_TEMPLATE_ID"),
-    )
-
-    if not template_id:
+    if not (
+        template_id := template_id_mapping.get(
+            (data["form_type"], data["region_code"], data["language_code"])
+        )
+    ):
         raise InvalidRequestError("No template id selected", 422, log_context)
 
     return {key: data.get(key) for key in data_fields}, template_id, log_context
@@ -140,15 +139,15 @@ def send_email(request: Request) -> Tuple[str, int]:
             kwargs,
         )
         response.raise_for_status()
-        entry = dict(message="notify email requested", **log_context)
+        entry = dict(**log_context, message="notify email requested")
         log_info(**entry)
     except RequestException as error:
         error_message = error.response.json()["errors"][0]
         status_code = error.response.status_code
         log_error(
+            **log_context,
             status_code=status_code,
             message=f"notify request failed: {error_message}",
-            **log_context,
         )
         return "Notify request failed", error.response.status_code
 
@@ -156,6 +155,11 @@ def send_email(request: Request) -> Tuple[str, int]:
         return "No content", 204
 
     try:
-        return response.json()
+        response_content = response.json()
+        del response_content["content"]
+        log_info(**log_context, **response_content)
+        return "Notify request successful", response.status_code
     except ValueError:
-        return "Notify JSON response object failed decoding", 503
+        message = "Notify JSON response object failed decoding"
+        log_error(**log_context, message=message)
+        return message, 503

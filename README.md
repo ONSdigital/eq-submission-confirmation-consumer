@@ -10,10 +10,7 @@ Local development uses Pipenv to manage the Python environment. Make sure you ha
 
 There are two environment variables required to run the function:
 
-- NOTIFY_TEST_TEMPLATE_ID (the id of the email template that will be sent to users).
 - NOTIFY_API_KEY (the key used to authenticate with Gov Notify - make sure to use a test key for local dev).
-
-NOTIFY_TEST_TEMPLATE_ID is provided via the .development.env file, but you will need to set the NOTIFY_API_KEY yourself as it is not kept in version control.
 
 The TCP port defaults to port `8080` but can be overriden by setting the `PORT` env var.
 
@@ -23,4 +20,4 @@ For development purposes it is possible to deploy the function to GCP from a loc
 
 If this is the first time deploying a Cloud Function to a project, the Cloud Build and Cloud Functions APIs may need to be enabled - navigate to `https://console.developers.google.com/apis/library/cloudbuild.googleapis.com?project=your-project-name` and `https://console.developers.google.com/apis/library/cloudfunctions.googleapis.com?project=your-project-name` to enable them.
 
-Once authenticated, run `make deploy`.
+Once authenticated, run `NOTIFY_API_KEY=<your-api-key> make deploy`.

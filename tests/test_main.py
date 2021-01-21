@@ -1,4 +1,3 @@
-import os
 import random
 import string
 from unittest.mock import Mock
@@ -11,22 +10,6 @@ from exceptions import InvalidNotifyKeyError
 from main import NOTIFY_BASE_URL, create_notify_token, send_email
 
 url = f"{NOTIFY_BASE_URL}/notifications/email"
-
-success_json = {
-    "id": "740e5834-3a29-46b4-9a6f-16142fde533a",
-    "reference": "STRING",
-    "content": {
-        "subject": "SUBJECT TEXT",
-        "body": "MESSAGE TEXT",
-        "from_email": "SENDER EMAIL",
-    },
-    "uri": f"{NOTIFY_BASE_URL}/notifications/740e5834-3a29-46b4-9a6f-16142fde533a",
-    "template": {
-        "id": "f33517ff-2a88-4f6e-b855-c550268ce08a",
-        "version": "6.0.1",
-        "uri": f"{NOTIFY_BASE_URL}/template/f33517ff-2a88-4f6e-b855-c550268ce08a",
-    },
-}
 
 
 def test_get_not_allowed():
@@ -63,7 +46,7 @@ def test_notify_response_error_returns_correctly():
                 "fulfilmentRequest": {
                     "email_address": "test@example.com",
                     "personalisation": {"address": "test address"},
-                    "form_type": "HH",
+                    "form_type": "H",
                     "language_code": "en",
                     "region_code": "GB-ENG",
                 }
@@ -84,7 +67,7 @@ def test_notify_response_no_content_204():
                 "fulfilmentRequest": {
                     "email_address": "test@example.com",
                     "personalisation": {"address": "test address"},
-                    "form_type": "HH",
+                    "form_type": "H",
                     "language_code": "en",
                     "region_code": "GB-ENG",
                 },
@@ -105,7 +88,7 @@ def test_notify_response_json_decode_error():
                 "fulfilmentRequest": {
                     "email_address": "test@example.com",
                     "personalisation": {"address": "test address"},
-                    "form_type": "HH",
+                    "form_type": "H",
                     "language_code": "en",
                     "region_code": "GB-ENG",
                 },
@@ -125,18 +108,17 @@ def test_send_email():
             "payload": {
                 "fulfilmentRequest": {
                     "email_address": "test@example.com",
-                    "personalisation": {"address": "test address"},
-                    "test": [],
-                    "form_type": "HH",
+                    "display_address": "test address",
+                    "form_type": "H",
                     "language_code": "en",
                     "region_code": "GB-ENG",
                 },
             },
         },
     )
-    responses.add(responses.POST, url, json=success_json, status=200)
+    responses.add(responses.POST, url, json={"content": "ok"}, status=200)
     response = send_email(request)
-    assert response == success_json
+    assert response == ("Notify request successful", 200)
 
 
 @responses.activate
@@ -169,7 +151,7 @@ def test_missing_language_code():
                     "email_address": "test@example.com",
                     "personalisation": {"address": "test address"},
                     "test": [],
-                    "form_type": "HH",
+                    "form_type": "H",
                     "region_code": "GB-ENG",
                 },
             },
@@ -189,7 +171,7 @@ def test_missing_region_code():
                     "email_address": "test@example.com",
                     "personalisation": {"address": "test address"},
                     "test": [],
-                    "form_type": "HH",
+                    "form_type": "H",
                     "language_code": "en",
                 },
             },
@@ -201,7 +183,6 @@ def test_missing_region_code():
 
 @responses.activate
 def test_no_valid_template_selected():
-    os.environ["NOTIFY_TEST_TEMPLATE_ID"] = ""
     request = Mock(
         method="POST",
         json={

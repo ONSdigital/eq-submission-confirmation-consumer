@@ -15,7 +15,6 @@ install:
 	pipenv lock -r > requirements.txt
 
 install-dev:
-	ln -fs .development.env .env
 	pipenv install --dev
 
 deploy: install
