@@ -11,7 +11,6 @@ from requests.exceptions import RequestException
 
 from exceptions import InvalidNotifyKeyError, InvalidRequestError
 
-
 NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
 NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
 

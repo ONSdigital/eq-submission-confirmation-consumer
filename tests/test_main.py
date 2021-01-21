@@ -1,17 +1,17 @@
 import os
-from importlib import reload
-from unittest import mock
 import random
 import string
+from importlib import reload
+from unittest import mock
 from unittest.mock import Mock
 from uuid import uuid4
 
 import pytest
 import responses
 
-from exceptions import InvalidNotifyKeyError
-from main import NOTIFY_BASE_URL, create_jwt_token, send_email
 import main
+from exceptions import InvalidNotifyKeyError
+from main import NOTIFY_BASE_URL, send_email
 
 url = f"{NOTIFY_BASE_URL}/notifications/email"
 
