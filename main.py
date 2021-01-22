@@ -160,13 +160,13 @@ def send_email(request: Request) -> Tuple[str, int]:
         response.raise_for_status()
         log_info("notify email requested", **log_context)
     except RequestException as error:
-        error_message = error.response.json()["errors"][0]
+        notify_error = error.response.json()["errors"][0]
         status_code = error.response.status_code
         message = "notify request failed"
         log_error(
             message,
             **log_context,
-            error=error_message,
+            notify_error=notify_error,
             status_code=status_code,
         )
         return message, error.response.status_code
