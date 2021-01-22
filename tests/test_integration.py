@@ -1,4 +1,4 @@
-from copy import copy
+from copy import deepcopy
 
 import pytest
 
@@ -20,7 +20,7 @@ class TestNotify:
     def test_successful(self, base_url, requests_session):
         res = requests_session.post(base_url, json=self.payload)
         assert res.status_code == 201
-        assert res.text == "Notify request successful"
+        assert res.text == "notify request successful"
 
     # The following should not return the `expected` json in the payload
     # as the temp failure and permanent failure email address are used
@@ -36,15 +36,15 @@ class TestNotify:
         assert res.status_code != 200
 
     def test_missing_address(self, base_url, requests_session):
-        payload = copy(self.payload)
+        payload = deepcopy(self.payload)
         del payload["payload"]["fulfilmentRequest"]["display_address"]
         res = requests_session.post(base_url, json=payload)
-        assert res.status_code == 400
-        assert res.text == "Notify request failed"
+        assert res.status_code == 422
+        assert res.text == "missing display_address identifier(s)"
 
     def test_missing_email(self, base_url, requests_session):
-        payload = copy(self.payload)
+        payload = deepcopy(self.payload)
         del payload["payload"]["fulfilmentRequest"]["email_address"]
         res = requests_session.post(base_url, json=payload)
-        assert res.status_code == 400
-        assert res.text == "Notify request failed"
+        assert res.status_code == 422
+        assert res.text == "missing email_address identifier(s)"

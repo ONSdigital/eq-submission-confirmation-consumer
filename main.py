@@ -15,12 +15,12 @@ NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
 NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
 
 
-def log_info(**kwargs):
-    print(json.dumps({**kwargs, "severity": "INFO"}))
+def log_info(message, **kwargs):
+    print(json.dumps({"message": message, "severity": "INFO", **kwargs}))
 
 
-def log_error(**kwargs):
-    print(json.dumps({**kwargs, "severity": "ERROR"}))
+def log_error(message, **kwargs):
+    print(json.dumps({"message": message, "severity": "ERROR", **kwargs}))
 
 
 service_id = NOTIFY_API_KEY[-73:-37]
@@ -41,12 +41,6 @@ if not _is_valid_uuid(service_id):
 
 if not _is_valid_uuid(secret_key):
     raise InvalidNotifyKeyError("API key is not a valid uuid")
-
-
-def create_jwt_token(secret: str, client_id: str) -> str:
-    headers = {"typ": "JWT", "alg": "HS256"}
-    claims = {"iss": client_id, "iat": int(datetime.now(timezone.utc).timestamp())}
-    return jwt.encode(payload=claims, key=secret, headers=headers)
 
 
 template_id_mapping = {
@@ -73,45 +67,64 @@ data_fields = ("email_address", "display_address", "tx_id", "questionnaire_id")
 session = Session()
 
 
-def _validate_request(request: Request) -> Tuple[Mapping, str, Mapping]:
+def _parse_request(request: Request) -> Tuple[Mapping, str, Mapping]:
     if not request.method == "POST":
-        # Note that Cloud Functions expect serialized JSON
-        # to correctly log
-        # https://cloud.google.com/functions/docs/monitoring/logging#writing_structured_logs
-        raise InvalidRequestError("Method not allowed", 405)
+        raise InvalidRequestError("method not allowed", 405)
 
     if not request.json:
-        raise InvalidRequestError("Missing notification request data", 422)
+        raise InvalidRequestError("missing notification request data", 422)
 
-    data = request.json["payload"]["fulfilmentRequest"]
+    fulfillment_request = request.json["payload"]["fulfilmentRequest"]
 
     log_context = {
-        "tx_id": data.get("tx_id"),
-        "questionnaire_id": data.get("questionnaire_id"),
+        "tx_id": fulfillment_request.get("tx_id"),
+        "questionnaire_id": fulfillment_request.get("questionnaire_id"),
     }
 
-    required_keys = ("form_type", "region_code", "language_code")
-    if missing_keys := [key for key in required_keys if not data.get(key)]:
-        msg = f"Missing {', '.join(missing_keys)} identifier(s)"
+    required_keys = (
+        "form_type",
+        "region_code",
+        "language_code",
+        "email_address",
+        "display_address",
+    )
+    if missing_keys := [
+        key for key in required_keys if not fulfillment_request.get(key)
+    ]:
+        msg = f"missing {', '.join(missing_keys)} identifier(s)"
         raise InvalidRequestError(msg, 422, log_context)
 
     try:
         template_id = template_id_mapping[
-            (data["form_type"], data["region_code"], data["language_code"])
+            (
+                fulfillment_request["form_type"],
+                fulfillment_request["region_code"],
+                fulfillment_request["language_code"],
+            )
         ]
     except KeyError as exc:
-        raise InvalidRequestError("No template id selected", 422, log_context) from exc
+        raise InvalidRequestError("no template id selected", 422, log_context) from exc
 
-    return {key: data.get(key) for key in data_fields}, template_id, log_context
+    return (
+        {key: fulfillment_request.get(key) for key in data_fields},
+        template_id,
+        log_context,
+    )
+
+
+def create_jwt_token(secret: str, client_id: str) -> str:
+    headers = {"typ": "JWT", "alg": "HS256"}
+    claims = {"iss": client_id, "iat": int(datetime.now(timezone.utc).timestamp())}
+    return jwt.encode(payload=claims, key=secret, headers=headers)
 
 
 # pylint: disable=too-many-return-statements
 def send_email(request: Request) -> Tuple[str, int]:
     try:
-        data, template_id, log_context = _validate_request(request)
+        data, template_id, log_context = _parse_request(request)
     except InvalidRequestError as error:
         log_context = error.log_context if error.log_context else {}
-        log_error(message=error.message, **log_context)
+        log_error(error.message, **log_context)
         return error.message, error.status_code
 
     api_token = create_jwt_token(secret_key, service_id)
@@ -122,7 +135,7 @@ def send_email(request: Request) -> Tuple[str, int]:
         }
     )
 
-    kwargs = json.dumps(
+    post_args = json.dumps(
         {
             "template_id": template_id,
             "personalisation": {"address": data["display_address"]},
@@ -133,30 +146,32 @@ def send_email(request: Request) -> Tuple[str, int]:
     try:
         response = session.post(
             f"{NOTIFY_BASE_URL}/notifications/email",
-            kwargs,
+            post_args,
         )
         response.raise_for_status()
-        entry = dict(**log_context, message="notify email requested")
-        log_info(**entry)
+        log_info("notify email requested", **log_context)
     except RequestException as error:
         error_message = error.response.json()["errors"][0]
         status_code = error.response.status_code
+        message = "notify request failed"
         log_error(
+            message,
             **log_context,
+            error=error_message,
             status_code=status_code,
-            message=f"notify request failed: {error_message}",
         )
-        return "Notify request failed", error.response.status_code
+        return message, error.response.status_code
 
     if response.status_code == 204:
-        return "No content", 204
+        return "no content", 204
 
     try:
-        response_json = response.json()
-        del response_json["content"]
-        log_info(**log_context, **response_json)
-        return "Notify request successful", response.status_code
+        notify_response = response.json()
+        del notify_response["content"]
+        message = "notify request successful"
+        log_info(message, notify_response=notify_response, **log_context)
+        return message, response.status_code
     except ValueError:
-        message = "Notify JSON response object failed decoding"
-        log_error(**log_context, message=message)
-        return message, 503
+        message = "notify JSON response object failed decoding"
+        log_error(message, **log_context)
+        return message, 500

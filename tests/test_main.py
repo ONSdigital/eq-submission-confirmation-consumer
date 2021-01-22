@@ -19,13 +19,13 @@ url = f"{NOTIFY_BASE_URL}/notifications/email"
 def test_get_not_allowed():
     request = Mock(method="GET")
     response = send_email(request)
-    assert response == ("Method not allowed", 405)
+    assert response == ("method not allowed", 405)
 
 
 def test_missing_data_returns_422():
     request = Mock(method="POST", json={})
     response = send_email(request)
-    assert response == ("Missing notification request data", 422)
+    assert response == ("missing notification request data", 422)
 
 
 def test_invalid_service_id_raises_invalid_notify_key_error():
@@ -44,166 +44,57 @@ def test_invalid_api_key_raises_invalid_notify_key_error():
 
 
 @responses.activate
-def test_notify_response_error_returns_correctly():
-    request = Mock(
-        method="POST",
-        json={
-            "payload": {
-                "fulfilmentRequest": {
-                    "email_address": "test@example.com",
-                    "personalisation": {"address": "test address"},
-                    "form_type": "H",
-                    "language_code": "en",
-                    "region_code": "GB-ENG",
-                }
-            },
-        },
-    )
+def test_notify_response_error_returns_correctly(mock_request):
     responses.add(responses.POST, url, json={"errors": "403"}, status=403)
-    response = send_email(request)
-    assert response == ("Notify request failed", 403)
+    response = send_email(mock_request)
+    assert response == ("notify request failed", 403)
 
 
 @responses.activate
-def test_notify_response_no_content_204():
-    request = Mock(
-        method="POST",
-        json={
-            "payload": {
-                "fulfilmentRequest": {
-                    "email_address": "test@example.com",
-                    "personalisation": {"address": "test address"},
-                    "form_type": "H",
-                    "language_code": "en",
-                    "region_code": "GB-ENG",
-                },
-            },
-        },
-    )
+def test_notify_response_no_content_204(mock_request):
     responses.add(responses.POST, url, json={}, status=204)
-    response = send_email(request)
-    assert response == ("No content", 204)
+    response = send_email(mock_request)
+    assert response == ("no content", 204)
 
 
 @responses.activate
-def test_notify_response_json_decode_error():
-    request = Mock(
-        method="POST",
-        json={
-            "payload": {
-                "fulfilmentRequest": {
-                    "email_address": "test@example.com",
-                    "personalisation": {"address": "test address"},
-                    "form_type": "H",
-                    "language_code": "en",
-                    "region_code": "GB-ENG",
-                },
-            },
-        },
-    )
+def test_notify_response_json_decode_error(mock_request):
+    # This shouldn't ever happen as it isn't a valid Notify response
     responses.add(responses.POST, url, status=200)
-    response = send_email(request)
-    assert response == ("Notify JSON response object failed decoding", 503)
+    response = send_email(mock_request)
+    assert response == ("notify JSON response object failed decoding", 500)
 
 
 @responses.activate
-def test_send_email():
-    request = Mock(
-        method="POST",
-        json={
-            "payload": {
-                "fulfilmentRequest": {
-                    "email_address": "test@example.com",
-                    "display_address": "test address",
-                    "form_type": "H",
-                    "language_code": "en",
-                    "region_code": "GB-ENG",
-                },
-            },
-        },
-    )
+def test_send_email(mock_request):
     responses.add(responses.POST, url, json={"content": "ok"}, status=200)
-    response = send_email(request)
-    assert response == ("Notify request successful", 200)
+    response = send_email(mock_request)
+    assert response == ("notify request successful", 200)
 
 
 @responses.activate
-def test_missing_form_type():
-    request = Mock(
-        method="POST",
-        json={
-            "payload": {
-                "fulfilmentRequest": {
-                    "email_address": "test@example.com",
-                    "personalisation": {"address": "test address"},
-                    "test": [],
-                    "language_code": "en",
-                    "region_code": "GB-ENG",
-                },
-            },
-        },
-    )
-    response = send_email(request)
-    assert response == ("Missing form_type identifier(s)", 422)
+def test_missing_form_type(mock_request):
+    del mock_request.json["payload"]["fulfilmentRequest"]["form_type"]
+    response = send_email(mock_request)
+    assert response == ("missing form_type identifier(s)", 422)
 
 
 @responses.activate
-def test_missing_language_code():
-    request = Mock(
-        method="POST",
-        json={
-            "payload": {
-                "fulfilmentRequest": {
-                    "email_address": "test@example.com",
-                    "personalisation": {"address": "test address"},
-                    "test": [],
-                    "form_type": "H",
-                    "region_code": "GB-ENG",
-                },
-            },
-        },
-    )
-    response = send_email(request)
-    assert response == ("Missing language_code identifier(s)", 422)
+def test_missing_language_code(mock_request):
+    del mock_request.json["payload"]["fulfilmentRequest"]["language_code"]
+    response = send_email(mock_request)
+    assert response == ("missing language_code identifier(s)", 422)
 
 
 @responses.activate
-def test_missing_region_code():
-    request = Mock(
-        method="POST",
-        json={
-            "payload": {
-                "fulfilmentRequest": {
-                    "email_address": "test@example.com",
-                    "personalisation": {"address": "test address"},
-                    "test": [],
-                    "form_type": "H",
-                    "language_code": "en",
-                },
-            },
-        },
-    )
-    response = send_email(request)
-    assert response == ("Missing region_code identifier(s)", 422)
+def test_missing_region_code(mock_request):
+    del mock_request.json["payload"]["fulfilmentRequest"]["region_code"]
+    response = send_email(mock_request)
+    assert response == ("missing region_code identifier(s)", 422)
 
 
 @responses.activate
-def test_no_valid_template_selected():
-    request = Mock(
-        method="POST",
-        json={
-            "payload": {
-                "fulfilmentRequest": {
-                    "email_address": "test@example.com",
-                    "personalisation": {"address": "test address"},
-                    "test": [],
-                    "form_type": "not-a-form-type",
-                    "language_code": "not-a-key",
-                    "region_code": "not-a-region-code",
-                },
-            },
-        },
-    )
-
-    response = send_email(request)
-    assert response == ("No template id selected", 422)
+def test_no_valid_template_selected(mock_request):
+    mock_request.json["payload"]["fulfilmentRequest"]["form_type"] = "not-valid"
+    response = send_email(mock_request)
+    assert response == ("no template id selected", 422)

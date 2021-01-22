@@ -2,6 +2,7 @@ import os
 import signal
 import subprocess
 from os.path import dirname
+from unittest.mock import Mock
 
 import pytest
 import requests
@@ -43,3 +44,21 @@ def requests_session(base_url):
     session.mount(base_url, retry_adapter)
 
     return session
+
+
+@pytest.fixture()
+def mock_request():
+    return Mock(
+        method="POST",
+        json={
+            "payload": {
+                "fulfilmentRequest": {
+                    "email_address": "simulate-delivered@notifications.service.gov.uk",
+                    "display_address": "test address",
+                    "form_type": "H",
+                    "language_code": "en",
+                    "region_code": "GB-ENG",
+                },
+            },
+        },
+    )
