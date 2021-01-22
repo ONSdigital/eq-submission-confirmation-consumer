@@ -94,6 +94,28 @@ def test_missing_region_code(mock_request):
 
 
 @responses.activate
+def test_missing_email_address(mock_request):
+    del mock_request.json["payload"]["fulfilmentRequest"]["email_address"]
+    response = send_email(mock_request)
+    assert response == ("missing email_address identifier(s)", 422)
+
+
+@responses.activate
+def test_missing_display_address(mock_request):
+    del mock_request.json["payload"]["fulfilmentRequest"]["display_address"]
+    response = send_email(mock_request)
+    assert response == ("missing display_address identifier(s)", 422)
+
+
+@responses.activate
+def test_multiple_missing_identifiers(mock_request):
+    del mock_request.json["payload"]["fulfilmentRequest"]["display_address"]
+    del mock_request.json["payload"]["fulfilmentRequest"]["email_address"]
+    response = send_email(mock_request)
+    assert response == ("missing email_address, display_address identifier(s)", 422)
+
+
+@responses.activate
 def test_no_valid_template_selected(mock_request):
     mock_request.json["payload"]["fulfilmentRequest"]["form_type"] = "not-valid"
     response = send_email(mock_request)

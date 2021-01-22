@@ -34,17 +34,3 @@ class TestNotify:
     def test_permanent_error(self, base_url, requests_session):
         res = requests_session.post(base_url, json=self.payload)
         assert res.status_code != 200
-
-    def test_missing_address(self, base_url, requests_session):
-        payload = deepcopy(self.payload)
-        del payload["payload"]["fulfilmentRequest"]["display_address"]
-        res = requests_session.post(base_url, json=payload)
-        assert res.status_code == 422
-        assert res.text == "missing display_address identifier(s)"
-
-    def test_missing_email(self, base_url, requests_session):
-        payload = deepcopy(self.payload)
-        del payload["payload"]["fulfilmentRequest"]["email_address"]
-        res = requests_session.post(base_url, json=payload)
-        assert res.status_code == 422
-        assert res.text == "missing email_address identifier(s)"

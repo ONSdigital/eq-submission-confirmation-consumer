@@ -80,11 +80,11 @@ def _parse_request(request: Request) -> Tuple[NotifyRequestArgs, Mapping]:
     if not request.json:
         raise InvalidRequestError("missing notification request data", 422)
 
-    fulfillment_request = request.json["payload"]["fulfilmentRequest"]
+    fulfilment_request = request.json["payload"]["fulfilmentRequest"]
 
     log_context = {
-        "tx_id": fulfillment_request.get("tx_id"),
-        "questionnaire_id": fulfillment_request.get("questionnaire_id"),
+        "tx_id": fulfilment_request.get("tx_id"),
+        "questionnaire_id": fulfilment_request.get("questionnaire_id"),
     }
 
     required_keys = (
@@ -95,7 +95,7 @@ def _parse_request(request: Request) -> Tuple[NotifyRequestArgs, Mapping]:
         "display_address",
     )
     if missing_keys := [
-        key for key in required_keys if not fulfillment_request.get(key)
+        key for key in required_keys if not fulfilment_request.get(key)
     ]:
         msg = f"missing {', '.join(missing_keys)} identifier(s)"
         raise InvalidRequestError(msg, 422, log_context)
@@ -103,9 +103,9 @@ def _parse_request(request: Request) -> Tuple[NotifyRequestArgs, Mapping]:
     try:
         template_id = template_id_mapping[
             (
-                fulfillment_request["form_type"],
-                fulfillment_request["region_code"],
-                fulfillment_request["language_code"],
+                fulfilment_request["form_type"],
+                fulfilment_request["region_code"],
+                fulfilment_request["language_code"],
             )
         ]
     except KeyError as exc:
@@ -114,8 +114,8 @@ def _parse_request(request: Request) -> Tuple[NotifyRequestArgs, Mapping]:
     return (
         NotifyRequestArgs(
             template_id,
-            fulfillment_request["email_address"],
-            fulfillment_request["display_address"],
+            fulfilment_request["email_address"],
+            fulfilment_request["display_address"],
         ),
         log_context,
     )
