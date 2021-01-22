@@ -152,9 +152,9 @@ def send_email(request: Request) -> Tuple[str, int]:
         return "No content", 204
 
     try:
-        response_content = response.json()
-        del response_content["content"]
-        log_info(**log_context, **response_content)
+        response_json = response.json()
+        del response_json["content"]
+        log_info(**log_context, **response_json)
         return "Notify request successful", response.status_code
     except ValueError:
         message = "Notify JSON response object failed decoding"
