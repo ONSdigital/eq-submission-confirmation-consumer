@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime, timezone
-from typing import Mapping, Tuple
+from typing import Mapping, NamedTuple, Tuple
 from uuid import UUID
 
 import jwt
@@ -13,6 +13,12 @@ from exceptions import InvalidNotifyKeyError, InvalidRequestError
 
 NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
 NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
+
+
+class NotifyRequestArgs(NamedTuple):
+    template_id: str
+    email_address: str
+    address: str
 
 
 def log_info(message, **kwargs):
@@ -67,7 +73,7 @@ data_fields = ("email_address", "display_address", "tx_id", "questionnaire_id")
 session = Session()
 
 
-def _parse_request(request: Request) -> Tuple[Mapping, str, Mapping]:
+def _parse_request(request: Request) -> Tuple[NotifyRequestArgs, Mapping]:
     if not request.method == "POST":
         raise InvalidRequestError("method not allowed", 405)
 
@@ -106,8 +112,11 @@ def _parse_request(request: Request) -> Tuple[Mapping, str, Mapping]:
         raise InvalidRequestError("no template id selected", 422, log_context) from exc
 
     return (
-        {key: fulfillment_request.get(key) for key in data_fields},
-        template_id,
+        NotifyRequestArgs(
+            template_id,
+            fulfillment_request["email_address"],
+            fulfillment_request["display_address"],
+        ),
         log_context,
     )
 
@@ -121,7 +130,7 @@ def create_jwt_token(secret: str, client_id: str) -> str:
 # pylint: disable=too-many-return-statements
 def send_email(request: Request) -> Tuple[str, int]:
     try:
-        data, template_id, log_context = _parse_request(request)
+        notify_request_args, log_context = _parse_request(request)
     except InvalidRequestError as error:
         log_context = error.log_context if error.log_context else {}
         log_error(error.message, **log_context)
@@ -137,9 +146,9 @@ def send_email(request: Request) -> Tuple[str, int]:
 
     post_args = json.dumps(
         {
-            "template_id": template_id,
-            "personalisation": {"address": data["display_address"]},
-            "email_address": data["email_address"],
+            "template_id": notify_request_args.template_id,
+            "personalisation": {"address": notify_request_args.address},
+            "email_address": notify_request_args.email_address,
         }
     )
 
