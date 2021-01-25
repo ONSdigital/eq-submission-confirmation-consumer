@@ -2,8 +2,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: ((image_registry))/eq-app-deploy-image
-    tag: ((deploy_image_version))
+    repository: google/cloud-sdk
 inputs:
   - name: eq-submission-confirmation-consumer
 params:
@@ -20,8 +19,8 @@ run:
       $SERVICE_ACCOUNT_JSON
       EOL
 
-      gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+      gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
       gcloud config set project "${PROJECT_ID}"
 
       cd eq-submission-confirmation-consumer
-      ./scripts/deploy.sh
+      ./scripts/deploy_function.sh

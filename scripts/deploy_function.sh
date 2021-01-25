@@ -5,5 +5,5 @@ if [[ -z "$NOTIFY_API_KEY" ]]; then
 fi
 gcloud functions deploy eq-submission-confirmation-consumer \
     --entry-point send_email --runtime python38 --trigger-http \
-    --set-env-vars NOTIFY_API_KEY=${NOTIFY_API_KEY} \
+    --set-env-vars NOTIFY_API_KEY="${NOTIFY_API_KEY}" \
     --region=europe-west2
