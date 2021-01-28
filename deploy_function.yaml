@@ -1,8 +1,10 @@
+---
 platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: google/cloud-sdk
+    repository: ((image_registry))/eq-cloud-function-deploy-image
+    tag: ((deploy_image_version))
 inputs:
   - name: eq-submission-confirmation-consumer
 params:
@@ -19,8 +21,10 @@ run:
       $SERVICE_ACCOUNT_JSON
       EOL
 
-      gcloud auth activate-service-account --key-file "$GOOGLE_APPLICATION_CREDENTIALS"
+      gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
       gcloud config set project "${PROJECT_ID}"
 
       cd eq-submission-confirmation-consumer
+      pip3 install pipenv
+      pipenv lock -r > requirements.txt
       ./scripts/deploy_function.sh
