@@ -26,5 +26,5 @@ run:
 
       cd eq-submission-confirmation-consumer
       pip3 install pipenv
-      pipenv lock -r > requirements.txt
+      pipenv lock --keep-outdated -d -r > requirements.txt
       ./scripts/deploy_function.sh
