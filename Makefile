@@ -17,8 +17,11 @@ install:
 install-dev:
 	pipenv install --dev
 
-deploy: install
+deploy_function: install
 	./scripts/deploy_function.sh
+
+delete_function:
+	pipenv run ./scripts/delete_function.sh
 
 format:
 	pipenv run black . tests

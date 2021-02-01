@@ -26,4 +26,10 @@ For development purposes it is possible to deploy the function to GCP from a loc
 
 If this is the first time deploying a Cloud Function to a project, the Cloud Build and Cloud Functions APIs may need to be enabled - navigate to `https://console.developers.google.com/apis/library/cloudbuild.googleapis.com?project=your-project-name` and `https://console.developers.google.com/apis/library/cloudfunctions.googleapis.com?project=your-project-name` to enable them.
 
-Once authenticated, run `NOTIFY_API_KEY=<your-api-key> make deploy`.
+Once authenticated, run `NOTIFY_API_KEY=<your-api-key> make deploy_function`.
+
+## Deleting from local machine
+
+For development purposes it is possible to delete the function in GCP from a local machine using the `gcloud` command. First login using `gcloud auth login`, then set the application default credentials using `gcloud auth application-default login`. Be sure to make the current gcloud project id the one you wish to deploy to `gcloud config set project <your-project-id>`
+
+Once authenticated, run `make delete_function`.
