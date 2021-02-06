@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 flask = "*"
+google-cloud-secret-manager = "*"
 pyjwt = "*"
 requests = "*"
 

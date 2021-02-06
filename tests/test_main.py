@@ -8,6 +8,10 @@ from uuid import uuid4
 
 import pytest
 import responses
+from google.cloud.secretmanager_v1.types import (
+    AccessSecretVersionResponse,
+    SecretPayload,
+)
 
 import main
 from exceptions import InvalidNotifyKeyError
@@ -70,6 +74,25 @@ def test_send_email(mock_request):
     responses.add(responses.POST, url, json={"content": "ok"}, status=200)
     response = send_email(mock_request)
     assert response == ("notify request successful", 200)
+
+
+@responses.activate
+def test_send_email_google_cloud_secret_manager(mock_request):
+    secret_payload = SecretPayload(data=os.environ["NOTIFY_API_KEY"].encode("UTF-8"))
+    access_secret_version_response = AccessSecretVersionResponse(payload=secret_payload)
+    del os.environ["NOTIFY_API_KEY"]
+    with mock.patch(
+        "google.auth.default", return_value=("", "project_id"), autospec=True
+    ):
+        with mock.patch(
+            "google.cloud.secretmanager.SecretManagerServiceClient.access_secret_version",
+            return_value=access_secret_version_response,
+            autospec=True,
+        ):
+            reload(main)
+            responses.add(responses.POST, url, json={"content": "ok"}, status=200)
+            response = send_email(mock_request)
+            assert response == ("notify request successful", 200)
 
 
 @responses.activate

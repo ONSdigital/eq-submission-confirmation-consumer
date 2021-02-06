@@ -4,15 +4,24 @@ from datetime import datetime, timezone
 from typing import Mapping, NamedTuple, Tuple
 from uuid import UUID
 
+import google.auth
 import jwt
 from flask import Request
+from google.cloud import secretmanager
 from requests import Session
 from requests.exceptions import RequestException
 
 from exceptions import InvalidNotifyKeyError, InvalidRequestError
 
-NOTIFY_API_KEY = os.environ["NOTIFY_API_KEY"]
 NOTIFY_BASE_URL = "https://api.notifications.service.gov.uk/v2"
+
+if (NOTIFY_API_KEY := os.getenv("NOTIFY_API_KEY")) is None:
+    _, project_id = google.auth.default()
+    client = secretmanager.SecretManagerServiceClient()
+    access_secret_version_response = client.access_secret_version(
+        name=f"projects/{project_id}/secrets/notify_api_key/versions/latest"
+    )
+    NOTIFY_API_KEY = access_secret_version_response.payload.data.decode("UTF-8")
 
 
 class NotifyRequestArgs(NamedTuple):

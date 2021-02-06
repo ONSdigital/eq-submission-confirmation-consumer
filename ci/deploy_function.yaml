@@ -10,7 +10,6 @@ inputs:
 params:
   SERVICE_ACCOUNT_JSON: ((gcp.service_account_json))
   PROJECT_ID:
-  NOTIFY_API_KEY:
 run:
   path: bash
   args:
