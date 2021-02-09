@@ -30,7 +30,7 @@ For the cloud function to work it needs a valid `notify_api_key` set, this can b
 
 **Secret Manager in GCP**
 
-Firstly check that Secret Manager in GCP is enabled, if not enable it. You can add the notify_api_key manually in the UI and update `App Engine default service account` to have `Secret Manager Secret Accessor` to the new notify_api_key.
+Firstly check that Secret Manager in GCP is enabled, if not enable it. You can add the `notify_api_key` manually in the UI and update `App Engine default service account` to have `Secret Manager Secret Accessor` to the new `notify_api_key`.
 
 or you can run the following gcloud commands
 
