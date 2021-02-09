@@ -44,7 +44,7 @@ N.B. replication-policy can be `automatic` or `user-managed`. If automatic neith
 
 **Deploying with an environment variable**
 
-You can also use an ENV if you do not have access to Secret Manager, you can do this by updating the `deploy_function.sh` to include `--set-env-vars NOTIFY_API_KEY=<notify_api_key>`
+You can also use an environment variable if you do not have access to Secret Manager, you can do this by updating the `deploy_function.sh` to include `--set-env-vars NOTIFY_API_KEY=<notify_api_key>`
 
 
 Once authenticated and the notify_api_key set, run `make deploy_function`.
