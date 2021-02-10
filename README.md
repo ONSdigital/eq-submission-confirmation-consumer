@@ -26,7 +26,7 @@ For development purposes it is possible to deploy the function to GCP from a loc
 
 If this is the first time deploying a Cloud Function to a project, the Cloud Build and Cloud Functions APIs may need to be enabled - navigate to `https://console.developers.google.com/apis/library/cloudbuild.googleapis.com?project=your-project-name` and `https://console.developers.google.com/apis/library/cloudfunctions.googleapis.com?project=your-project-name` to enable them.
 
-For the cloud function to work it needs a valid `notify_api_key` set, this can be done in 2 ways
+For the cloud function to work it needs a valid Notify API key, this can be provided in two ways - a `notify_api_key` secret in GCP Secret Manager or a `NOTIFY_API_KEY` environment variable. The environment variable should only be used for development or testing, it should never be used for a formal environment.
 
 **Secret Manager in GCP**
 
