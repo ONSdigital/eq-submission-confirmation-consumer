@@ -30,9 +30,11 @@ For the cloud function to work it needs a valid Notify API key, this can be prov
 
 **Secret Manager in GCP**
 
-Firstly check that Secret Manager in GCP is enabled, if not enable it. You can add the `notify_api_key` manually in the UI and update `App Engine default service account` to have `Secret Manager Secret Accessor` to the new `notify_api_key`.
+Firstly check that Secret Manager in GCP is enabled, if not enable it. You can add the `notify_api_key` manually in the UI or use the gcloud commands below. If doing it manually, go to Secret Manager in GCP and click `Create Secret`, enter the name as `notify_api_key` and your secret value, a region can also be set if required.
 
-or you can run the following gcloud commands
+Once the secret has been created, click on the name `notify_api_key` and expand the info panel on the right if not already showing. In this menu click add member and fill out the form, member should be `<project_id>@appspot.gserviceaccount.com` and role should be `Secret Manager Secret Accessor`
+
+If using gcloud commands run the following
 
 ```
 gcloud secrets create notify_api_key --data-file=<data_file> --project=<project_id> --replication-policy=<replication-policy> --locations=<locations>
