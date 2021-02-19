@@ -55,6 +55,13 @@ def test_notify_response_error_returns_correctly(mock_request):
 
 
 @responses.activate
+def test_notify_response_error_connection_reset_error(mock_request):
+    responses.add(responses.GET, url, body=Exception(ConnectionResetError))
+    response = send_email(mock_request)
+    assert response == ("no response", 444)
+
+
+@responses.activate
 def test_notify_response_no_content_204(mock_request):
     responses.add(responses.POST, url, json={}, status=204)
     response = send_email(mock_request)
