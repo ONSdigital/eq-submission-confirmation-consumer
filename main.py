@@ -178,7 +178,6 @@ def send_email(request: Request) -> Tuple[str, int]:
             status_code=status_code,
         )
         return message, status_code
-
     except RequestException as error:
         notify_error = error.response.json()["errors"][0]
         status_code = error.response.status_code
