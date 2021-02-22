@@ -57,7 +57,7 @@ def test_notify_response_error_returns_correctly(mock_request):
 
 @responses.activate
 def test_notify_response_connection_error(mock_request):
-    responses.add(responses.GET, url, body=RequestConnectionError)
+    responses.add(responses.POST, url, body=RequestConnectionError())
     response = send_email(mock_request)
     assert response == ("connection error", 504)
 
