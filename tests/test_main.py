@@ -12,6 +12,7 @@ from google.cloud.secretmanager_v1.types import (
     AccessSecretVersionResponse,
     SecretPayload,
 )
+from requests.exceptions import ConnectionError as RequestConnectionError
 
 import main
 from exceptions import InvalidNotifyKeyError
@@ -55,10 +56,10 @@ def test_notify_response_error_returns_correctly(mock_request):
 
 
 @responses.activate
-def test_notify_response_error_connection_reset_error(mock_request):
-    responses.add(responses.GET, url, body=Exception(ConnectionResetError))
+def test_notify_response_connection_error(mock_request):
+    responses.add(responses.GET, url, body=RequestConnectionError)
     response = send_email(mock_request)
-    assert response == ("no response", 444)
+    assert response == ("connection error", 504)
 
 
 @responses.activate

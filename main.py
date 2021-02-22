@@ -9,6 +9,7 @@ import jwt
 from flask import Request
 from google.cloud import secretmanager
 from requests import Session
+from requests.exceptions import ConnectionError as RequestConnectionError
 from requests.exceptions import RequestException
 
 from exceptions import InvalidNotifyKeyError, InvalidRequestError
@@ -168,19 +169,18 @@ def send_email(request: Request) -> Tuple[str, int]:
         )
         response.raise_for_status()
         log_info("notify email requested", **log_context)
-    except RequestException as error:
-        try:
-            notify_error = error.response.json()["errors"][0]
-        except AttributeError:
-            message = "no response"
-            status_code = 444
-            log_error(
-                message,
-                **log_context,
-                status_code=status_code,
-            )
-            return message, status_code
+    except RequestConnectionError:
+        message = "connection error"
+        status_code = 504
+        log_error(
+            message,
+            **log_context,
+            status_code=status_code,
+        )
+        return message, status_code
 
+    except RequestException as error:
+        notify_error = error.response.json()["errors"][0]
         status_code = error.response.status_code
         message = "notify request failed"
         log_error(
