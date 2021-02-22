@@ -171,15 +171,6 @@ def send_email(request: Request) -> Tuple[str, int]:
     except RequestException as error:
         try:
             notify_error = error.response.json()["errors"][0]
-            status_code = error.response.status_code
-            message = "notify request failed"
-            log_error(
-                message,
-                **log_context,
-                notify_error=notify_error,
-                status_code=status_code,
-            )
-            return message, error.response.status_code
         except AttributeError:
             message = "no response"
             status_code = 444
@@ -189,6 +180,16 @@ def send_email(request: Request) -> Tuple[str, int]:
                 status_code=status_code,
             )
             return message, status_code
+
+        status_code = error.response.status_code
+        message = "notify request failed"
+        log_error(
+            message,
+            **log_context,
+            notify_error=notify_error,
+            status_code=status_code,
+        )
+        return message, error.response.status_code
 
     if response.status_code == 204:
         return "no content", 204
