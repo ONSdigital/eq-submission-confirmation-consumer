@@ -181,7 +181,14 @@ def send_email(request: Request) -> Tuple[str, int]:
             )
             return message, error.response.status_code
         except AttributeError:
-            return "no response", 444
+            message = "no response"
+            status_code = 444
+            log_error(
+                message,
+                **log_context,
+                status_code=status_code,
+            )
+            return message, status_code
 
     if response.status_code == 204:
         return "no content", 204
