@@ -19,3 +19,16 @@ QUEUE_NAME=<queue_name> \
 fly -t <target-concourse> execute \
   --config ci/resume_cloud_task_queue.yaml
 ```
+
+## Deploy Credentials
+
+The `notify_api_key` can be provisioned into GCP Secret Manager using the `deploy_credentials.yaml` task. This can be done via Concourse using the following command:
+
+```sh
+PROJECT_ID=<project_id> \
+NOTIFY_API_KEY=<notify_api_key> \
+fly -t <target-concourse> execute \
+  --config ci/deploy_credentials.yaml
+```
+
+If the `NOTIFY_API_KEY` is omitted then a dummy value will be provisioned which conforms to the Notify API key spec.
