@@ -8,8 +8,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      NOTIFY_API_KEY: ${{ secrets.NOTIFY_API_KEY }}
     steps:
       - uses: actions/checkout@v2
       - run: |
@@ -23,5 +21,3 @@ jobs:
         run: make install-dev
       - name: Running lint tests
         run: make lint
-      - name: Running code tests
-        run: make test
