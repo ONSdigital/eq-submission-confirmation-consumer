@@ -26,9 +26,7 @@ The `notify_api_key` can be provisioned into GCP Secret Manager using the `deplo
 
 ```sh
 PROJECT_ID=<project_id> \
-NOTIFY_API_KEY=<notify_api_key> \
+NOTIFY_API_KEY_FILE=<notify_api_key_file> \
 fly -t <target-concourse> execute \
   --config ci/deploy_credentials.yaml
 ```
-
-If the `NOTIFY_API_KEY` is omitted then a dummy value will be provisioned which conforms to the Notify API key spec.
