@@ -12,7 +12,7 @@ help:
 
 install:
 	pipenv install
-	pipenv lock -r > requirements.txt
+	pipenv requirements > requirements.txt
 
 install-dev:
 	pipenv install --dev
