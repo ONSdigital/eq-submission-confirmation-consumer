@@ -10,7 +10,7 @@ pyjwt = "*"
 requests = "*"
 
 [dev-packages]
-black = "==22.3.0"
+black = "*"
 mypy = "*"
 pylint = "*"
 pytest = "*"
