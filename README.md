@@ -6,7 +6,7 @@ On instantiation the function forwards the request on to Gov Notify, which is re
 
 ## Development
 
-Local development uses Pipenv to manage the Python environment. Make sure you have Pipenv installed and are using Python version 3.8.
+Local development uses Pipenv to manage the Python environment. Make sure you have Pipenv installed and are using Python version 3.10.
 
 There are two environment variables required to run the function:
 

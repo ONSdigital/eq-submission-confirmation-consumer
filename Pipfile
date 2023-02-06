@@ -10,7 +10,7 @@ pyjwt = "*"
 requests = "*"
 
 [dev-packages]
-black = "==21.8b0"
+black = "*"
 mypy = "*"
 pylint = "*"
 pytest = "*"
@@ -23,7 +23,7 @@ python-dotenv = "*"
 types-requests = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.10"
 
 [pipenv]
 allow_prereleases = false
