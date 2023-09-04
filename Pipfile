@@ -21,6 +21,8 @@ pytest-cov = "*"
 functions-framework = "*"
 python-dotenv = "*"
 types-requests = "*"
+wrapt = "*"
+dill = "*"
 
 [requires]
 python_version = "3.11"
