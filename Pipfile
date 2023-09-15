@@ -21,6 +21,7 @@ pytest-cov = "*"
 functions-framework = "*"
 python-dotenv = "*"
 types-requests = "*"
+astroid = "2.13.3"
 
 [requires]
 python_version = "3.11"
