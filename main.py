@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime, timezone
-from typing import Mapping, NamedTuple, Tuple
+from typing import Mapping, NamedTuple, Tuple, Union
 from uuid import UUID
 
 import google.auth
@@ -84,7 +84,7 @@ session = Session()
 
 
 def _parse_request(request: Request) -> Tuple[NotifyRequestArgs, Mapping]:
-    if not request.method == "POST":
+    if request.method != "POST":
         raise InvalidRequestError("method not allowed", 405)
 
     if not request.json:
@@ -138,11 +138,11 @@ def create_jwt_token(secret: str, client_id: str) -> str:
 
 
 # pylint: disable=too-many-return-statements
-def send_email(request: Request) -> Tuple[str, int]:
+def send_email(request: Request) -> Union[Tuple[str, int], Tuple[str, None]]:
     try:
         notify_request_args, log_context = _parse_request(request)
     except InvalidRequestError as error:
-        log_context = error.log_context if error.log_context else {}
+        log_context = error.log_context or {}
         log_error(error.message, **log_context)
         return error.message, error.status_code
 
@@ -179,16 +179,24 @@ def send_email(request: Request) -> Tuple[str, int]:
         )
         return message, status_code
     except RequestException as error:
-        notify_error = error.response.json()["errors"][0]
-        status_code = error.response.status_code
         message = "notify request failed"
-        log_error(
-            message,
-            **log_context,
-            notify_error=notify_error,
-            status_code=status_code,
-        )
-        return message, error.response.status_code
+
+        if error.response:
+            notify_error = error.response.json()["errors"][0]
+            status_code = error.response.status_code
+
+            log_error(
+                message,
+                **log_context,
+                notify_error=notify_error,
+                status_code=status_code,
+            )
+
+            return message, error.response.status_code
+
+        log_error(message, **log_context)
+
+        return message, None
 
     if response.status_code == 204:
         return "no content", 204

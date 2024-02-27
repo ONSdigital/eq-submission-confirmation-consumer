@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
+flask = "<3.0.0"
 google-cloud-secret-manager = "*"
 pyjwt = "*"
 requests = "*"
@@ -21,6 +21,7 @@ pytest-cov = "*"
 functions-framework = "*"
 python-dotenv = "*"
 types-requests = "*"
+wrapt="*"
 
 [requires]
 python_version = "3.11"
