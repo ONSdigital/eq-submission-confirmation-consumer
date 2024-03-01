@@ -21,7 +21,6 @@ responses = "*"
 pytest-cov = "*"
 python-dotenv = "*"
 types-requests = "*"
-wrapt="*"
 
 [requires]
 python_version = "3.11"
