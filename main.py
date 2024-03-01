@@ -179,24 +179,17 @@ def send_email(request: Request) -> Union[Tuple[str, int], Tuple[str, None]]:
         )
         return message, status_code
     except RequestException as error:
+        # Type ignore: To be fixed, error may not have a response
+        notify_error = error.response.json()["errors"][0]  # type: ignore
+        status_code = error.response.status_code  # type: ignore
         message = "notify request failed"
-
-        if error.response is not None:
-            notify_error = error.response.json()["errors"][0]
-            status_code = error.response.status_code
-
-            log_error(
-                message,
-                **log_context,
-                notify_error=notify_error,
-                status_code=status_code,
-            )
-
-            return message, error.response.status_code
-
-        log_error(message, **log_context)
-
-        return message, None
+        log_error(
+            message,
+            **log_context,
+            notify_error=notify_error,
+            status_code=status_code,
+        )
+        return message, status_code
 
     if response.status_code == 204:
         return "no content", 204
