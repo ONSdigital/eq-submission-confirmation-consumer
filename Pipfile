@@ -8,6 +8,7 @@ flask = "*"
 google-cloud-secret-manager = "*"
 pyjwt = "*"
 requests = "*"
+functions-framework = "*"
 
 [dev-packages]
 black = "*"
@@ -18,7 +19,6 @@ flake8 = "*"
 pylint-quotes = "*"
 responses = "*"
 pytest-cov = "*"
-functions-framework = "*"
 python-dotenv = "*"
 types-requests = "*"
 
