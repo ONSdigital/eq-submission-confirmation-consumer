@@ -21,3 +21,5 @@ jobs:
         run: make install-dev
       - name: Running lint tests
         run: make lint
+      - name: Running unit tests
+        run: make test-unit
