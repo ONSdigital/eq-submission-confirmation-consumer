@@ -64,7 +64,7 @@ def test_notify_response_connection_error(mock_request):
 
 @responses.activate
 def test_notify_response_no_content_204(mock_request):
-    responses.add(responses.POST, url, json={}, status=204)
+    responses.add(responses.POST, url, status=204)
     response = send_email(mock_request)
     assert response == ("no content", 204)
 
