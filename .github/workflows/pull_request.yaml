@@ -25,3 +25,5 @@ jobs:
         run: make lint
       - name: Running unit tests
         run: make test
+        env:
+          NOTIFY_API_KEY: ${{ env.NOTIFY_API_KEY }}
