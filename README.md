@@ -1,6 +1,6 @@
 # eq-submission-confirmation-consumer
 
-[![Build Status](https://github.com/ONSdigital/eq-submission-confirmation-consumer/actions/workflows/codeql-analysis.yaml/badge.svg)](https://github.com/ONSdigital/eq-submission-confirmation-consumer/actions/workflows/codeql-analysis.yaml)
+[![CodeQL](https://github.com/ONSdigital/eq-submission-confirmation-consumer/actions/workflows/codeql-analysis.yaml/badge.svg)](https://github.com/ONSdigital/eq-submission-confirmation-consumer/actions/workflows/codeql-analysis.yaml)
 
 Google Cloud Function that uses an HTTP listener to respond to HTTP requests.
 
