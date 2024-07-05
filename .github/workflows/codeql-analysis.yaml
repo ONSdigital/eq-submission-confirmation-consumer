@@ -8,7 +8,7 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [main, fix-codeql-scan-error]
+    branches: [main]
   pull_request:
     branches: [main, fix-codeql-scan-error]
   schedule:
