@@ -1,5 +1,7 @@
 # eq-submission-confirmation-consumer
 
+[![CodeQL](https://github.com/ONSdigital/eq-submission-confirmation-consumer/actions/workflows/codeql-analysis.yaml/badge.svg)](https://github.com/ONSdigital/eq-submission-confirmation-consumer/actions/workflows/codeql-analysis.yaml)
+
 Google Cloud Function that uses an HTTP listener to respond to HTTP requests.
 
 On instantiation the function forwards the request on to Gov Notify, which is responsible for sending the appropriate email.
