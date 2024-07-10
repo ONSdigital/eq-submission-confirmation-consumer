@@ -24,4 +24,4 @@ jobs:
       - name: Running lint tests
         run: make lint
       - name: Running unit tests
-        run: make test
+        run: make test-no-integration
