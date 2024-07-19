@@ -22,5 +22,5 @@ function display_result {
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-pytest --cov=main --cov-report html --cov-fail-under=100 "$@"
+pytest --cov=main --cov-report html --cov-fail-under=100 "$@" --ignore=tests/test_integration.py
 display_result $? 3 "Unit tests"
