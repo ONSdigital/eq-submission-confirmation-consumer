@@ -33,8 +33,5 @@ lint:
 test:
 	pipenv run ./scripts/run_tests.sh
 
-test-no-integration:
-	pipenv run ./scripts/run_unit_tests.sh
-
 run-debug:
 	pipenv run functions-framework --target=send_email --debug
