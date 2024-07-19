@@ -8,12 +8,12 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      NOTIFY_API_KEY: ${{ secrets.DEV_NOTIFY_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - run: |
           echo "PYTHON_VERSION=$(cat .python-version)" >> $GITHUB_ENV
-          NOTIFY_API_KEY=$(<dev-notify-api-key)
-          echo "NOTIFY_API_KEY=$NOTIFY_API_KEY" >> $GITHUB_ENV
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
