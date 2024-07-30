@@ -15,7 +15,7 @@ def notify_function_process():
 
     # pylint: disable=consider-using-with
     process = subprocess.Popen(
-        ["pipenv run functions-framework --target=send_email --debug"],
+        ["poetry run functions-framework --target=send_email --debug"],
         cwd=cwd,
         stdout=subprocess.PIPE,
         shell=True,
