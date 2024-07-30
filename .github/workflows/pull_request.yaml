@@ -23,7 +23,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'poetry'
       - name: Install virtual environment
         run: make install-dev
       - name: Running lint tests
