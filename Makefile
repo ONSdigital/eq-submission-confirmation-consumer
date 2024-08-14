@@ -31,7 +31,7 @@ lint:
 	poetry run ./scripts/run_lint.sh
 
 test:
-	NOTIFY_API_KEY=$$(cat ./dev-notify-api-key) poetry run ./scripts/run_tests.sh
+	poetry run ./scripts/run_tests.sh
 
 
 run-debug:
