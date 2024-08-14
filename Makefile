@@ -31,7 +31,7 @@ lint:
 	pipenv run ./scripts/run_lint.sh
 
 test:
-	pipenv run ./scripts/run_tests.sh
+	NOTIFY_API_KEY=$$(cat ./dev-notify-api-key) pipenv run ./scripts/run_tests.sh
 
 run-debug:
 	pipenv run functions-framework --target=send_email --debug
