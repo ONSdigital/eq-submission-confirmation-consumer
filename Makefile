@@ -11,27 +11,28 @@ help:
 	@echo " * make run-debug ... run locally using functions-framework"
 
 install:
-	pipenv install
-	pipenv requirements > requirements.txt
+	poetry install
+	poetry export --without-hashes --format=requirements.txt > requirements.txt
 
 install-dev:
-	pipenv install --dev
+	poetry install
 
 deploy_function: install
 	./scripts/deploy_function.sh
 
 delete_function:
-	pipenv run ./scripts/delete_function.sh
+	poetry run ./scripts/delete_function.sh
 
 format:
-	pipenv run black . tests
-	pipenv run isort . tests
+	poetry run black . tests
+	poetry run isort . tests
 
 lint:
-	pipenv run ./scripts/run_lint.sh
+	poetry run ./scripts/run_lint.sh
 
 test:
-	NOTIFY_API_KEY=$$(cat ./dev-notify-api-key) pipenv run ./scripts/run_tests.sh
+	NOTIFY_API_KEY=$$(cat ./dev-notify-api-key) poetry run ./scripts/run_tests.sh
+
 
 run-debug:
-	pipenv run functions-framework --target=send_email --debug
+	poetry run functions-framework --target=send_email --debug

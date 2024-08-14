@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "eq-submission-confirmation-consumer"
+version = "1.0.0"
+description = "ONS Digital eQ Submission Confirmation Consumer App"
+authors = ["ONSDigital"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "*"
+google-cloud-secret-manager = "*"
+pyjwt = "*"
+requests = "*"
+functions-framework = "*"
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.17.7"
+black = "*"
+mypy = "*"
+pytest = "*"
+flake8 = "*"
+pylint-quotes = "*"
+responses = "*"
+pytest-cov = "*"
+python-dotenv = "*"
+types-requests = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
