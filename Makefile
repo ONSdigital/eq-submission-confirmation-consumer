@@ -33,5 +33,6 @@ lint:
 test:
 	poetry run ./scripts/run_tests.sh
 
+
 run-debug:
 	poetry run functions-framework --target=send_email --debug
