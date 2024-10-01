@@ -6,7 +6,7 @@ authors = ["ONSDigital"]
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 flask = "*"
 google-cloud-secret-manager = "*"
 pyjwt = "*"
@@ -14,16 +14,16 @@ requests = "*"
 functions-framework = "*"
 
 [tool.poetry.group.dev.dependencies]
-pylint = "^2.17.7"
+pylint = "*"
 black = "*"
 mypy = "*"
 pytest = "*"
 flake8 = "*"
-pylint-quotes = "*"
 responses = "*"
 pytest-cov = "*"
 python-dotenv = "*"
 types-requests = "*"
+flake8-quotes = "*"
 
 [build-system]
 requires = ["poetry-core"]
