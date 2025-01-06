@@ -24,6 +24,6 @@ run:
       gcloud config set project "${PROJECT_ID}"
 
       cd eq-submission-confirmation-consumer
-      pip3 install poetry
+      pip3 install poetry poetry-plugin-export
       poetry export --without-hashes --format=requirements.txt > requirements.txt
       ./scripts/deploy_function.sh
