@@ -16,7 +16,7 @@ There are two environment variables required to run the function:
 
 The TCP port defaults to port `8080` but can be overriden by setting the `PORT` env var.
 
-## Testing
+## Testing and running locally
 
 To run the tests, make sure you have set `NOTIFY_API_KEY` to the Notify test key, and run `make test`. This will spin up a local functions-framework process against which the integration tests are run.
 
