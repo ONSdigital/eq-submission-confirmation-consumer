@@ -14,7 +14,7 @@ fi
 KEY_NAME="notify_api_key"
 PROJECT_NUMBER=$(gcloud projects describe "${PROJECT_ID}" --format="value(projectNumber)")
 
-gcloud secrets create "$KEY_NAME" --replication-policy="user-managed" --locations=europe-west2 --project="$PROJECT_ID" || true
+gcloud secrets create "$KEY_NAME" --replication-policy="user-managed" --locations="europe-west2" --project="$PROJECT_ID" || true
 gcloud secrets versions add "$KEY_NAME" --data-file="$NOTIFY_API_KEY_FILE" --project="$PROJECT_ID"
 
 # Give the default compute service account access to this secret
