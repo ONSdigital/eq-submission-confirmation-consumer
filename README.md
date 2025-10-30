@@ -8,7 +8,7 @@ On instantiation the function forwards the request on to Gov Notify, which is re
 
 ## Development
 
-Local development uses Poetry to manage the Python environment. Make sure you have Poetry installed and are using Python version 3.12:
+Local development uses Poetry to manage the Python environment. Make sure you have Poetry installed and are using Python version 3.13:
 
 Install poetry and install dependencies:
 
