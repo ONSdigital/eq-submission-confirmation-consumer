@@ -12,6 +12,7 @@ google-cloud-secret-manager = "*"
 pyjwt = "*"
 requests = "*"
 functions-framework = "*"
+protobuf = "5.29.6"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "*"
