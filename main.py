@@ -58,23 +58,23 @@ if not _is_valid_uuid(service_id):
 if not _is_valid_uuid(secret_key):
     raise InvalidNotifyKeyError("API key is not a valid uuid")
 
-
+# These are placeholder id mappings until the new ones exist https://officefornationalstatistics.atlassian.net/browse/CTE-327
 template_id_mapping = {
-    ("H", "GB-ENG", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
-    ("H", "GB-WLS", "en"): "0c5a4f95-bfa4-4364-9394-8499b4d777d5",
-    ("H", "GB-WLS", "cy"): "755d73d1-0cb6-4f2f-95e9-857a2ad071bb",
-    ("H", "GB-NIR", "en"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
-    ("H", "GB-NIR", "ga"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
-    ("H", "GB-NIR", "eo"): "0889cfa1-c0eb-4ba6-93d9-acc41b060152",
-    ("I", "GB-ENG", "en"): "71de56dc-f83b-4899-93ab-7fe61e417c2e",
-    ("I", "GB-WLS", "en"): "71de56dc-f83b-4899-93ab-7fe61e417c2e",
-    ("I", "GB-WLS", "cy"): "1001ac43-093d-425c-ac7d-68df5147c603",
-    ("I", "GB-NIR", "en"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
-    ("I", "GB-NIR", "ga"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
-    ("I", "GB-NIR", "eo"): "ed1c2e9f-c81e-4cc2-889c-8e0fa1d2ce1b",
-    ("C", "GB-ENG", "en"): "4077d2cf-81cd-462d-9065-f227a7c39a8d",
-    ("C", "GB-WLS", "en"): "4077d2cf-81cd-462d-9065-f227a7c39a8d",
-    ("C", "GB-WLS", "cy"): "e4a4ebea-fcc8-463b-8686-5b8a7320f089",
+    ("H", "GB-ENG", "en"): "00000000-1111-2222-3333-000000000000",
+    ("H", "GB-WLS", "en"): "00000000-1111-2222-3333-000000000001",
+    ("H", "GB-WLS", "cy"): "00000000-1111-2222-3333-000000000002",
+    ("H", "GB-NIR", "en"): "00000000-1111-2222-3333-000000000003",
+    ("H", "GB-NIR", "ga"): "00000000-1111-2222-3333-000000000004",
+    ("H", "GB-NIR", "eo"): "00000000-1111-2222-3333-000000000005",
+    ("I", "GB-ENG", "en"): "00000000-1111-2222-3333-000000000006",
+    ("I", "GB-WLS", "en"): "00000000-1111-2222-3333-000000000007",
+    ("I", "GB-WLS", "cy"): "00000000-1111-2222-3333-000000000008",
+    ("I", "GB-NIR", "en"): "00000000-1111-2222-3333-000000000009",
+    ("I", "GB-NIR", "ga"): "00000000-1111-2222-3333-000000000010",
+    ("I", "GB-NIR", "eo"): "00000000-1111-2222-3333-000000000011",
+    ("C", "GB-ENG", "en"): "00000000-1111-2222-3333-000000000012",
+    ("C", "GB-WLS", "en"): "00000000-1111-2222-3333-000000000013",
+    ("C", "GB-WLS", "cy"): "00000000-1111-2222-3333-000000000014"
 }
 
 data_fields = ("email_address", "display_address", "tx_id", "questionnaire_id")
